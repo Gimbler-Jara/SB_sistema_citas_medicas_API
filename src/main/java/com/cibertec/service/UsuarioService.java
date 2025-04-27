@@ -35,7 +35,7 @@ public class UsuarioService {
 		if (usuarios.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		} else {
-			return ResponseEntity.status(HttpStatus.OK).body(usuarios);
+			return ResponseEntity.status(HttpStatus.OK).body(usuarios); 
 		}
 	}
 

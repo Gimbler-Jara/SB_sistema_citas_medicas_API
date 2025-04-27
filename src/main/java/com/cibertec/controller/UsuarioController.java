@@ -8,8 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.cibertec.dto.LoginDTO;
+import com.cibertec.dto.RegistroMedicoDTO;
+import com.cibertec.dto.RegistroPacienteDTO;
 import com.cibertec.dto.UsuarioRequestDTO;
+import com.cibertec.model.Medico;
+import com.cibertec.model.Paciente;
 import com.cibertec.model.Usuario;
+import com.cibertec.service.MedicoService;
+import com.cibertec.service.PacienteService;
 import com.cibertec.service.UsuarioService;
 
 @RestController
@@ -18,6 +24,12 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+    
+    @Autowired
+    private MedicoService medicoService;
+    
+    @Autowired
+    private PacienteService pacienteService;
 
     // ENDPOINT PARA LISTAR TODOS LOS USUARIOS
     @GetMapping
@@ -35,6 +47,19 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<Usuario> agregarUsuario(@RequestBody UsuarioRequestDTO usuario) {
         return usuarioService.agregarUsuario(usuario);
+    }
+    
+    
+    @PostMapping("/medico")
+    public ResponseEntity<Medico> registrarMedico(@RequestBody RegistroMedicoDTO dto) {
+        Medico medico = medicoService.registrarMedico(dto);
+        return ResponseEntity.ok(medico);
+    }
+    
+    @PostMapping("/paciente")
+    public ResponseEntity<Paciente> registrarPaciente(@RequestBody RegistroPacienteDTO dto) {
+        Paciente paciente = pacienteService.registrarPaciente(dto);
+        return ResponseEntity.ok(paciente);
     }
 
     // ENDPOINT PARA ACTUALIZAR UN USUARIO EXISTENTE

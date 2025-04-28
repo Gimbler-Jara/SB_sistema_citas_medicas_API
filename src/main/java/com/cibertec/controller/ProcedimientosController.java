@@ -23,15 +23,17 @@ public class ProcedimientosController {
 
 	@PostMapping("/registrar-disponibilidad")
 	public ResponseEntity<?> registrarDisponibilidad(@RequestBody RegistrarDisponibilidadDeCitaDTO req) {
-		return service.registrarDisponibilidad(req.getIdMedico(), req.getIdDiaSemana(), req.getIdHora(),
-				req.getIdEspecialidad());
+	    return service.registrarDisponibilidad(req.getIdMedico(), req.getIdDiaSemana(), req.getIdHora(),
+	            req.getIdEspecialidad());
 	}
+
 
 	@PutMapping("/cambiar-estado-disponibilidad")
 	public ResponseEntity<?> cambiarEstadoDisponibilidad(@RequestBody CambiarEstadoDisponibilidadDeCitaDTO req) {
 		return service.cambiarEstadoDisponibilidad(req.getIdMedico(), req.getIdDiaSemana(), req.getIdHora(),
 				req.isActivo());
 	}
+	
 
 	@PostMapping("/agendar-cita")
 	public ResponseEntity<?> agendarCita(@RequestBody AgendarCitaRequestDTO req) {
@@ -72,5 +74,11 @@ public class ProcedimientosController {
 	public ResponseEntity<?> obtenerEspecialidadPorIdMedico(@PathVariable("idMedico") int idMedico) {
 		return service.obtenerEspecialidadPorIdMedico(idMedico);
 	}
+	
+	
+	@GetMapping("/medico/{idMedico}")
+    public ResponseEntity<?> listarDisponibilidadesPorMedico(@PathVariable Integer idMedico) {
+        return service.obtenerDisponibilidadesPorMedico(idMedico);
+    }
 
 }

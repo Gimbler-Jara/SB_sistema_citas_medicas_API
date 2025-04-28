@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class CitasReservadasPorPacienteResponseDTO {
+	public int id;
 	public int idMedico;
     public String medico;
     public String especialidad;

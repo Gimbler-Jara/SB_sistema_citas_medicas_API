@@ -12,9 +12,11 @@ import org.springframework.stereotype.Repository;
 import com.cibertec.dto.CitasAgendadasResponseDTO;
 import com.cibertec.dto.CitasReservadasPorPacienteResponseDTO;
 import com.cibertec.dto.DiasDisponiblesPorMedicoDTO;
+import com.cibertec.dto.DisponibilidadCitaPorMedicoDTO;
 import com.cibertec.dto.HorasDispiniblesDeCitasDTO;
 import com.cibertec.dto.MedicosPorEspecialidadDTO;
 import com.cibertec.model.CitaMedica;
+import com.cibertec.model.Disponibilidad;
 import com.cibertec.model.Especialidad;
 
 import jakarta.transaction.Transactional;
@@ -26,19 +28,20 @@ public interface ProcedimientosRepository extends JpaRepository<CitaMedica, Inte
 	@Query(value = "CALL usp_listar_citas_Agendadas(:idMedico)", nativeQuery = true)
 	List<CitasAgendadasResponseDTO> listarCitasAgendadas(@Param("idMedico") int idMedico);
 
-	// 2. Registrar disponibilidad
-	@Modifying
 	@Transactional
 	@Query(value = "CALL sp_registrar_disponibilidad(:idMedico, :idDiaSemana, :idHora, :idEspecialidad)", nativeQuery = true)
-	void registrarDisponibilidad(@Param("idMedico") int idMedico, @Param("idDiaSemana") int idDiaSemana,
+	List<Object[]> registrarDisponibilidad(@Param("idMedico") int idMedico, @Param("idDiaSemana") int idDiaSemana,
 			@Param("idHora") int idHora, @Param("idEspecialidad") int idEspecialidad);
+	
 
 	// 3. Cambiar estado de disponibilidad
 	@Modifying
 	@Transactional
 	@Query(value = "CALL sp_cambiar_estado_disponibilidad(:idMedico, :idDiaSemana, :idHora, :activo)", nativeQuery = true)
 	void cambiarEstadoDisponibilidad(@Param("idMedico") int idMedico, @Param("idDiaSemana") int idDiaSemana,
-			@Param("idHora") int idHora, @Param("activo") boolean activo);
+	    @Param("idHora") int idHora, @Param("activo") int activo);
+
+	
 
 	// 4. Agendar cita
 	@Modifying
@@ -85,4 +88,9 @@ public interface ProcedimientosRepository extends JpaRepository<CitaMedica, Inte
 	// 12. Obtener Especialidad por id medico
 	@Query(value = "CALL sp_consultar_especialidad_por_id_medico(:idMedico)", nativeQuery = true)
 	Especialidad obtenerEspecialidadPorIdMedico(@Param("idMedico") int idMedico);
+	
+	//13. Listar disponiblidade de los medicos
+	@Query(value = "CALL sp_listar_disponibilidades_por_medico(:idMedico)", nativeQuery = true)
+    List<DisponibilidadCitaPorMedicoDTO> listarDisponibilidadesPorMedico(@Param("idMedico") Integer idMedico);
+
 }

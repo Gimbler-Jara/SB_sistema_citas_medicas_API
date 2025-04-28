@@ -14,8 +14,9 @@ public class Paciente {
     @Column(name = "id_usuario")
     private Integer idUsuario;
 
-    @OneToOne
+
     @MapsId
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 }

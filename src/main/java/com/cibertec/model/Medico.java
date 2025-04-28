@@ -14,8 +14,8 @@ public class Medico {
     @Column(name = "id_usuario")
     private Integer idUsuario;
 
-    @OneToOne
-    @MapsId
+	@MapsId
+	 @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)   
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 

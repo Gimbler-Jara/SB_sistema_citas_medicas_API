@@ -1,12 +1,16 @@
 package com.cibertec.service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.cibertec.dto.PacienteActualizacionDTO;
 import com.cibertec.dto.RegistroPacienteDTO;
 import com.cibertec.model.DocumentType;
 import com.cibertec.model.Paciente;
@@ -74,5 +78,40 @@ public class PacienteService {
 
         return pacienteRepository.save(paciente);
     }
+    
+    public ResponseEntity<?> eliminarPaciente(Integer id) {
+        Optional<Paciente> paciente = pacienteRepository.findById(id);
+        if (paciente.isPresent()) {
+            try {
+                pacienteRepository.delete(paciente.get());
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            } catch (Exception e) {
+                System.out.println("Ocurrió algo inesperado, error: " + e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+    
+    
+    public ResponseEntity<?> actualizarPaciente(Integer id, PacienteActualizacionDTO dto) {
+        Optional<Paciente> pacienteOpt = pacienteRepository.findById(id);
+        if (pacienteOpt.isPresent()) {
+            Paciente paciente = pacienteOpt.get();
+            Usuario usuario = paciente.getUsuario();
+            usuario.setFirstName(dto.getFirstName());
+            usuario.setMiddleName(dto.getMiddleName());
+            usuario.setLastName(dto.getLastName());
+            usuario.setTelefono(dto.getTelefono());
+            usuario.setBirthDate(LocalDate.parse(dto.getBirthDate()));
+            usuario.setGender(dto.getGender());
+            usuarioRepository.save(usuario);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Paciente actualizado correctamente"));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("success", false, "message", "Paciente no encontrado"));
+        }
+    }
+
 }
 

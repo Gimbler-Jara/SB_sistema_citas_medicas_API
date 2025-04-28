@@ -1,54 +1,60 @@
 package com.cibertec.controller;
 
-import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.cibertec.model.CitaMedica;
+import com.cibertec.dto.*;
 import com.cibertec.service.CitaMedicaService;
 
 @RestController
-@RequestMapping("/api/citas")
+@RequestMapping("/api/cita-medica")
 public class CitaMedicaController {
 
-    @Autowired
-    private CitaMedicaService citaMedicaService;
+	@Autowired
+	private CitaMedicaService service;
 
-    // LISTAR TODAS LAS CITAS
-    @GetMapping
-    public ResponseEntity<List<CitaMedica>> listarCitas() {
-        return citaMedicaService.listarCitas();
-    }
+	@GetMapping("/citas-agendadas/{idMedico}")
+	public ResponseEntity<?> listarCitasAgendadas(@PathVariable("idMedico") int idMedico) {
+		return service.listarCitasAgendadas(idMedico);
+	}
 
-    // OBTENER CITA POR ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Optional<CitaMedica>> obtenerCitaPorId(@PathVariable Integer id) {
-        return citaMedicaService.obtenerCitaPorId(id);
-    }
+	@PostMapping("/registrar-disponibilidad")
+	public ResponseEntity<?> registrarDisponibilidadDeCita(@RequestBody RegistrarDisponibilidadDeCitaDTO req) {
+	    return service.registrarDisponibilidadDeCita(req.getIdMedico(), req.getIdDiaSemana(), req.getIdHora(),
+	            req.getIdEspecialidad());
+	}
 
-    // AGREGAR NUEVA CITA
-    @PostMapping
-    public ResponseEntity<CitaMedica> agregarCita(@RequestBody CitaMedica citaMedica) {
-        return citaMedicaService.agregarCita(citaMedica);
-    }
 
-    // ACTUALIZAR CITA
-    @PutMapping("/{id}")
-    public ResponseEntity<CitaMedica> actualizarCita(
-            @PathVariable Integer id,
-            @RequestBody CitaMedica citaMedica
-    ) {
-        return citaMedicaService.actualizarCita(id, citaMedica);
-    }
+	@PutMapping("/cambiar-estado-disponibilidad")
+	public ResponseEntity<?> cambiarEstadoDisponibilidad(@RequestBody CambiarEstadoDisponibilidadDeCitaDTO req) {
+		return service.cambiarEstadoDisponibilidad(req.getIdMedico(), req.getIdDiaSemana(), req.getIdHora(),
+				req.isActivo());
+	}
+	
 
-    // ELIMINAR CITA
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarCita(@PathVariable Integer id) {
-        return citaMedicaService.eliminarCita(id);
-    }
+	@PostMapping("/agendar-cita")
+	public ResponseEntity<?> agendarCita(@RequestBody AgendarCitaRequestDTO req) {
+		return service.agendarCita(req.getIdMedico(), req.getIdPaciente(), req.getFecha(), req.getIdHora());
+	}
+
+	
+	@PutMapping("/cambiar-estado-cita-reservado-atendido")
+	public ResponseEntity<?> cambiarEstadoCitaReservadoAtendio(@RequestParam int idCita) {
+		return service.cambiarEstadoCitaReservadoAtendio(idCita);
+	}
+
+	@DeleteMapping("/eliminar-cita/{idCita}")
+	public ResponseEntity<?> eliminarCita(@PathVariable("idCita") int idCita) {
+		return service.eliminarCitaReservado(idCita);
+	}
+
+	@GetMapping("/citas-reservadas-paciente/{idPaciente}")
+	public ResponseEntity<?> listarCitasReservadasPorPaciente(@PathVariable("idPaciente") int idPaciente) {
+		return service.listarCitasResgistradasPorPaciente(idPaciente);
+	}
+
+	
+
 }
-
-

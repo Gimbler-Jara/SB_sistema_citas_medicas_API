@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +29,7 @@ public class MedicoController {
 	
 	
 	@GetMapping
-    public ResponseEntity<List<Medico>> listarEspecialidades() {
+    public ResponseEntity<List<Medico>> listarMedicos() {
         return medicoService.listarMedicos();
     }
 	
@@ -45,11 +44,6 @@ public class MedicoController {
 	    return medicoService.actualizarMedico(id, dto);
 	}
 
-	
-	@DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarMedico(@PathVariable Integer id) {
-        return medicoService.eliminarMedico(id);
-    }
 	
 	@GetMapping("/especialidad_por_id_medico/{idMedico}")
 	public ResponseEntity<?> obtenerEspecialidadPorIdMedico(@PathVariable("idMedico") int idMedico) {

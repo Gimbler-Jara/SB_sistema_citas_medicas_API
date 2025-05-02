@@ -9,7 +9,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.cibertec.dto.DiasDisponiblesPorMedicoDTO;
 import com.cibertec.dto.DisponibilidadCitaPorMedicoDTO;
@@ -41,6 +43,12 @@ public class MedicoService {
 	@Autowired
 	private EspecialidadRepository especialidadRepository;
 
+	private final PasswordEncoder passwordEncoder;
+
+	public MedicoService(PasswordEncoder passwordEncoder) {
+		this.passwordEncoder = passwordEncoder;
+	}
+
 	public ResponseEntity<List<Medico>> listarMedicos() {
 		List<Medico> medicos = medicoRepository.findAll();
 		if (medicos.isEmpty()) {
@@ -52,19 +60,17 @@ public class MedicoService {
 
 	public Medico registrarMedico(RegistroMedicoDTO dto) {
 
-		System.out.println(dto.getDocumentTypeId());
+		// 0. Verificar si ya existe un usuario con ese email
+		if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El correo electrónico ya está registrado.");
+		}
 
 		// 1. Recuperar entidades relacionadas
 		DocumentType documentType = documentTypeRepository.findById(dto.getDocumentTypeId())
 				.orElseThrow(() -> new RuntimeException("Tipo de documento no encontrado"));
-		Rol rol = rolRepository.findById(2) // O el ID de tu rol "Médico"
-				.orElseThrow(() -> new RuntimeException("Rol médico no encontrado"));
+		Rol rol = rolRepository.findById(2).orElseThrow(() -> new RuntimeException("Rol médico no encontrado"));
 		Especialidad especialidad = especialidadRepository.findById(dto.getEspecialidadId())
 				.orElseThrow(() -> new RuntimeException("Especialidad no encontrada"));
-
-		System.out.println("DocumentType ID: " + documentType.getId());
-		System.out.println("Rol ID: " + rol.getId());
-		System.out.println("Especialidad ID: " + especialidad.getId());
 
 		// 2. Crear usuario
 		Usuario usuario = new Usuario();
@@ -77,8 +83,9 @@ public class MedicoService {
 		usuario.setGender(dto.getGender());
 		usuario.setTelefono(dto.getTelefono());
 		usuario.setEmail(dto.getEmail());
-		// Debes hashear el password aquí
-		usuario.setPasswordHash(dto.getPassword());
+		usuario.setActivo(true);
+		// Hashear la contraseña antes de guardar
+		usuario.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
 		usuario.setRol(rol);
 
 		Usuario usuarioGuardado = usuarioRepository.save(usuario);
@@ -90,48 +97,31 @@ public class MedicoService {
 
 		return medicoRepository.save(medico);
 	}
-	
+
 	public ResponseEntity<?> actualizarMedico(Integer id, MedicoActualizacionDTO dto) {
-	    Optional<Medico> medicoOpt = medicoRepository.findById(id);
-	    if (medicoOpt.isPresent()) {
-	        Medico medico = medicoOpt.get();
-	        Usuario usuario = medico.getUsuario();
-	        usuario.setFirstName(dto.getFirstName());
-	        usuario.setMiddleName(dto.getMiddleName());
-	        usuario.setLastName(dto.getLastName());
-	        usuario.setTelefono(dto.getTelefono());
-	        usuario.setBirthDate(dto.getBirthDate());
-	        usuario.setGender(dto.getGender());
-	        if(dto.getEspecialidadId() != null){
-	            Especialidad esp = especialidadRepository.findById(dto.getEspecialidadId()).orElse(null);
-	            medico.setEspecialidad(esp);
-	        }
-	        usuarioRepository.save(usuario);
-	        medicoRepository.save(medico); // Guarda cambios de especialidad si aplica
-	        return ResponseEntity.ok(Map.of("success", true, "message", "Médico actualizado correctamente"));
-	    } else {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("success", false, "message", "Médico no encontrado"));
-	    }
+		Optional<Medico> medicoOpt = medicoRepository.findById(id);
+		if (medicoOpt.isPresent()) {
+			Medico medico = medicoOpt.get();
+			Usuario usuario = medico.getUsuario();
+			usuario.setFirstName(dto.getFirstName());
+			usuario.setMiddleName(dto.getMiddleName());
+			usuario.setLastName(dto.getLastName());
+			usuario.setTelefono(dto.getTelefono());
+			usuario.setBirthDate(dto.getBirthDate());
+			usuario.setGender(dto.getGender());
+			if (dto.getEspecialidadId() != null) {
+				Especialidad esp = especialidadRepository.findById(dto.getEspecialidadId()).orElse(null);
+				medico.setEspecialidad(esp);
+			}
+			usuarioRepository.save(usuario);
+			medicoRepository.save(medico); // Guarda cambios de especialidad si aplica
+			return ResponseEntity.ok(Map.of("success", true, "message", "Médico actualizado correctamente"));
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(Map.of("success", false, "message", "Médico no encontrado"));
+		}
 	}
 
-	
-	
-	public ResponseEntity<?> eliminarMedico(Integer id) {
-        Optional<Medico> medicoOpt = medicoRepository.findById(id);
-        if (medicoOpt.isPresent()) {
-            Medico medico = medicoOpt.get();
-            try {
-                medicoRepository.delete(medico); // Elimina el médico
-                usuarioRepository.deleteById(medico.getIdUsuario()); // Elimina el usuario asociado
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-            } catch (Exception e) {
-                System.out.println("Ocurrió algo inesperado al eliminar médico: " + e.getMessage());
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
 
 	public ResponseEntity<Especialidad> obtenerEspecialidadPorIdMedico(int idMedico) {
 		Especialidad especialidad = medicoRepository.obtenerEspecialidadPorIdMedico(idMedico);
@@ -172,8 +162,7 @@ public class MedicoService {
 			return ResponseEntity.status(HttpStatus.OK).body(horas);
 		}
 	}
-	
-	
+
 	public ResponseEntity<Map<String, Object>> listarHorariosDeTrabajoMedico(Integer idMedico) {
 		List<DisponibilidadCitaPorMedicoDTO> lista = medicoRepository.listarHorariosDeTrabajoMedico(idMedico);
 		Map<String, Object> response = new HashMap<>();

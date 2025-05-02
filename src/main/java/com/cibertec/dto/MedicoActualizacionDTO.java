@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class MedicoActualizacionDTO {
-	private Integer idUsuario; // O idMedico, si lo manejas así
+	private Integer idUsuario;
 	private String firstName;
 	private String middleName;
 	private String lastName;

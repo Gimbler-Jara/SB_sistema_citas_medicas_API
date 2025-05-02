@@ -1,11 +1,13 @@
 package com.cibertec.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.cibertec.dto.LoginDTO;
@@ -29,13 +31,19 @@ public class UsuarioService {
 	@Autowired
 	private DocumentTypeRepository documentTypeRepository;
 
+	private final PasswordEncoder passwordEncoder;
+
+	public UsuarioService(PasswordEncoder passwordEncoder) {
+		this.passwordEncoder = passwordEncoder;
+	}
+
 	// MÉTODO PARA LISTAR TODOS LOS USUARIOS
 	public ResponseEntity<List<Usuario>> listarUsuarios() {
 		List<Usuario> usuarios = usuarioRepository.findAll();
 		if (usuarios.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		} else {
-			return ResponseEntity.status(HttpStatus.OK).body(usuarios); 
+			return ResponseEntity.status(HttpStatus.OK).body(usuarios);
 		}
 	}
 
@@ -63,6 +71,7 @@ public class UsuarioService {
 			usuario.setTelefono(usuarioRequest.telefono);
 			usuario.setEmail(usuarioRequest.email);
 			usuario.setPasswordHash(usuarioRequest.passwordHash);
+			usuario.setActivo(true);
 
 			// Aquí es donde conviertes el ID a la entidad
 			DocumentType docType = documentTypeRepository.findById(usuarioRequest.document_type)
@@ -108,35 +117,56 @@ public class UsuarioService {
 		}
 	}
 
-	// MÉTODO PARA ELIMINAR UN USUARIO
-	public ResponseEntity<?> eliminarUsuario(Integer id) {
-		Optional<Usuario> usuario = usuarioRepository.findById(id);
-		if (usuario.isPresent()) {
-			try {
-				usuarioRepository.delete(usuario.get());
-				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-			} catch (Exception e) {
-				System.out.println("Ocurrió un error inesperado: " + e.getMessage());
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-			}
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
-	}
-	
-	
-	public ResponseEntity<Usuario> buscarPorEmail(LoginDTO  user){
-		Optional<Usuario> usuario =  usuarioRepository.findByEmail(user.email);
-		if(usuario.isPresent()) {
-	        Usuario _user = usuario.get();
-	        if(_user.getPasswordHash().equals(user.password)) {
-	            return ResponseEntity.status(HttpStatus.OK).body(_user);
-	        } else {
-	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+	// MÉTODO PARA ELIMINAR UN USUARIO DE MANERA LOGICA
+	public ResponseEntity<?> cambiarEstadoUsuario(Integer idUsuario) {
+	    Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUsuario);
+
+	    if (usuarioOpt.isPresent()) {
+	        try {
+	            Usuario usuario = usuarioOpt.get();
+
+	            boolean estadoActual = usuario.getActivo();
+	            usuario.setActivo(!estadoActual);
+	            usuarioRepository.save(usuario);
+
+	            String mensaje = estadoActual
+	                    ? "Usuario desactivado correctamente"
+	                    : "Usuario activado correctamente";
+
+	            return ResponseEntity.ok(Map.of("message", mensaje));
+	        } catch (Exception e) {
+	            System.out.println("Error al cambiar el estado del usuario: " + e.getMessage());
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                    .body(Map.of("message", "Error interno al cambiar estado del usuario"));
 	        }
 	    } else {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                .body(Map.of("message", "Usuario no encontrado"));
 	    }
+	}
+
+
+	public ResponseEntity<?> buscarPorEmail(LoginDTO user) {
+		Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(user.email);
+
+	    if (usuarioOpt.isEmpty()) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                .body(Map.of("message", "Usuario no encontrado"));
+	    }
+
+	    Usuario usuario = usuarioOpt.get();
+
+	    if (!usuario.getActivo()) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+	                .body(Map.of("message", "Usuario inactivo"));
+	    }
+
+	    if (!passwordEncoder.matches(user.password, usuario.getPasswordHash())) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+	                .body(Map.of("message", "Contraseña incorrecta"));
+	    }
+
+	    return ResponseEntity.ok(usuario);
 	}
 
 }

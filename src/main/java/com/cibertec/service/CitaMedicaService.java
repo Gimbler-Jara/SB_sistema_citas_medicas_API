@@ -23,6 +23,8 @@ public class CitaMedicaService {
 	// 1. Listar citas agendadas por médico
 	public ResponseEntity<List<CitasAgendadasResponseDTO>> listarCitasAgendadas(int idMedico) {
 		List<CitasAgendadasResponseDTO> citas = procedimientosRepository.listarCitasAgendadas(idMedico);
+				//.stream().filter(cita -> !cita.getEstado().equalsIgnoreCase("Atendido")).toList();
+
 		if (citas.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		} else {
@@ -35,8 +37,8 @@ public class CitaMedicaService {
 			int idEspecialidad) {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			List<Object[]> result = procedimientosRepository.registrarDisponibilidadDeCita(idMedico, idDiaSemana, idHora,
-					idEspecialidad);
+			List<Object[]> result = procedimientosRepository.registrarDisponibilidadDeCita(idMedico, idDiaSemana,
+					idHora, idEspecialidad);
 			if (!result.isEmpty()) {
 				Object[] row = result.get(0);
 				boolean success = Integer.parseInt(row[0].toString()) == 1;
@@ -86,9 +88,6 @@ public class CitaMedicaService {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	
-
-	
 
 	// 8. Cambiar estado cita a reservado
 	public ResponseEntity<Void> cambiarEstadoCitaReservadoAtendio(int idCita) {

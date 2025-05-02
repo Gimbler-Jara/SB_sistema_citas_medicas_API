@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.cibertec.dto.LoginDTO;
-import com.cibertec.model.Usuario;
 import com.cibertec.service.UsuarioService;
 
 @RestController
@@ -17,7 +16,13 @@ public class UsuarioController {
 
 
 	@PostMapping("login")
-	public ResponseEntity<Usuario> login(@RequestBody LoginDTO user) {
-		return usuarioService.buscarPorEmail(user);
+	public ResponseEntity<?> login(@RequestBody LoginDTO user) {
+		return usuarioService.buscarPorEmail(user); 
 	}
+	
+	@PutMapping("cambiar-estado-usuario/{id}")
+	public ResponseEntity<?> cambiarEstado(@PathVariable("id") Integer idUsuario) {
+	    return usuarioService.cambiarEstadoUsuario(idUsuario);
+	}
+
 }

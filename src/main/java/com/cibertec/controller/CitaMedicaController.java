@@ -40,8 +40,8 @@ public class CitaMedicaController {
 	}
 
 	
-	@PutMapping("/cambiar-estado-cita-reservado-atendido")
-	public ResponseEntity<?> cambiarEstadoCitaReservadoAtendio(@RequestParam int idCita) {
+	@PutMapping("/cambiar-estado-cita-reservado-atendido/{idCita}")
+	public ResponseEntity<?> cambiarEstadoCitaReservadoAtendio(@PathVariable  int idCita) {
 		return service.cambiarEstadoCitaReservadoAtendio(idCita);
 	}
 

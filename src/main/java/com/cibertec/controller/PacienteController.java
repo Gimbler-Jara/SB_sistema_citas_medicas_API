@@ -29,11 +29,6 @@ public class PacienteController {
 		return ResponseEntity.ok(paciente);
 	}
     
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarPaciente(@PathVariable Integer id) {
-        return pacienteService.eliminarPaciente(id);
-    }
-    
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarPaciente(@PathVariable Integer id, @RequestBody PacienteActualizacionDTO dto) {
     	System.out.println("DTO recibido: " + dto);

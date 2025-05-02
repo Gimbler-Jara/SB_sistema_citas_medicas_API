@@ -37,18 +37,12 @@ public interface CitaMedicaRepository extends JpaRepository<CitaMedica, Integer>
 
 	
 
-	// 4. Agendar cita
+	// 4. Agendar cita---------------------
 	@Modifying
 	@Transactional
 	@Query(value = "CALL sp_agendar_cita(:idMedico, :idPaciente, :fecha, :idHora)", nativeQuery = true)
 	void agendarCita(@Param("idMedico") int idMedico, @Param("idPaciente") int idPaciente, @Param("fecha") Date fecha,
 			@Param("idHora") int idHora);
-
-	// 5. Listar especialidades
-	/*
-	 * @Query(value = "CALL sp_listar_especialidades()", nativeQuery = true)
-	 * List<Object[]> listarEspecialidades();
-	 */
 
 	
 
@@ -63,6 +57,7 @@ public interface CitaMedicaRepository extends JpaRepository<CitaMedica, Integer>
 	@Transactional
 	@Query(value = "CALL sp_eliminar_cita_Reservado(:idCita)", nativeQuery = true)
 	void eliminarCitaReservado(@Param("idCita") int idCita);
+	
 
 	// 11. Listar citas porgramadas por pacientes
 	@Query(value = "CALL sp_listar_citas_programadas_por_paciente(:idPaciente)", nativeQuery = true)

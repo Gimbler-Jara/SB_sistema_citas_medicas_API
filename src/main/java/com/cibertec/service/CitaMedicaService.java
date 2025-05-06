@@ -20,7 +20,7 @@ public class CitaMedicaService {
 	@Autowired
 	private CitaMedicaRepository procedimientosRepository;
 
-	// 1. Listar citas agendadas por médico
+	// 1. Listar citas agendadaspara mostrar al medico
 	public ResponseEntity<List<CitasAgendadasResponseDTO>> listarCitasAgendadas(int idMedico) {
 		List<CitasAgendadasResponseDTO> citas = procedimientosRepository.listarCitasAgendadas(idMedico);
 				//.stream().filter(cita -> !cita.getEstado().equalsIgnoreCase("Atendido")).toList();
@@ -32,7 +32,7 @@ public class CitaMedicaService {
 		}
 	}
 
-	// 2. Registrar disponibilidad
+	// 2. Registrar disponibilidad de dias y horarios
 	public ResponseEntity<Map<String, Object>> registrarDisponibilidadDeCita(int idMedico, int idDiaSemana, int idHora,
 			int idEspecialidad) {
 		Map<String, Object> response = new HashMap<>();

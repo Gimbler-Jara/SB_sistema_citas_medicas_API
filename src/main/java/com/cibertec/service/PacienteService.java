@@ -1,6 +1,5 @@
 package com.cibertec.service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -54,18 +53,14 @@ public class PacienteService {
 	}
 
 	public Paciente registrarPaciente(RegistroPacienteDTO dto) {
-		// 0. Verificar si ya existe un usuario con ese email
+		
 		if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El correo electrónico ya está registrado.");
 		}
 
-		// 1. Recuperar entidades relacionadas
-		DocumentType documentType = documentTypeRepository.findById(dto.getDocumentTypeId())
-				.orElseThrow(() -> new RuntimeException("Tipo de documento no encontrado"));
-		Rol rol = rolRepository.findById(1) // El ID de tu rol "Paciente"
-				.orElseThrow(() -> new RuntimeException("Rol paciente no encontrado"));
+		DocumentType documentType = documentTypeRepository.findById(dto.getDocumentTypeId()).orElseThrow(() -> new RuntimeException("Tipo de documento no encontrado"));
+		Rol rol = rolRepository.findById(1).orElseThrow(() -> new RuntimeException("Rol paciente no encontrado"));
 
-		// 2. Crear usuario
 		Usuario usuario = new Usuario();
 		usuario.setDocumentType(documentType);
 		usuario.setDni(dto.getDni());
@@ -82,7 +77,6 @@ public class PacienteService {
 		
 		Usuario usuarioGuardado = usuarioRepository.save(usuario);
 
-		// 3. Crear paciente
 		Paciente paciente = new Paciente();
 		paciente.setUsuario(usuarioGuardado);
 
@@ -99,8 +93,6 @@ public class PacienteService {
 			usuario.setMiddleName(dto.getMiddleName());
 			usuario.setLastName(dto.getLastName());
 			usuario.setTelefono(dto.getTelefono());
-			usuario.setBirthDate(LocalDate.parse(dto.getBirthDate()));
-			usuario.setGender(dto.getGender());
 			usuarioRepository.save(usuario);
 			return ResponseEntity.ok(Map.of("success", true, "message", "Paciente actualizado correctamente"));
 		} else {

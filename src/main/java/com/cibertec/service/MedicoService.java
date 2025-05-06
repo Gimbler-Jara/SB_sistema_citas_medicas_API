@@ -98,6 +98,7 @@ public class MedicoService {
 		return medicoRepository.save(medico);
 	}
 
+	
 	public ResponseEntity<?> actualizarMedico(Integer id, MedicoActualizacionDTO dto) {
 		Optional<Medico> medicoOpt = medicoRepository.findById(id);
 		if (medicoOpt.isPresent()) {
@@ -107,14 +108,12 @@ public class MedicoService {
 			usuario.setMiddleName(dto.getMiddleName());
 			usuario.setLastName(dto.getLastName());
 			usuario.setTelefono(dto.getTelefono());
-			usuario.setBirthDate(dto.getBirthDate());
-			usuario.setGender(dto.getGender());
 			if (dto.getEspecialidadId() != null) {
 				Especialidad esp = especialidadRepository.findById(dto.getEspecialidadId()).orElse(null);
 				medico.setEspecialidad(esp);
 			}
 			usuarioRepository.save(usuario);
-			medicoRepository.save(medico); // Guarda cambios de especialidad si aplica
+			medicoRepository.save(medico); 
 			return ResponseEntity.ok(Map.of("success", true, "message", "Médico actualizado correctamente"));
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)

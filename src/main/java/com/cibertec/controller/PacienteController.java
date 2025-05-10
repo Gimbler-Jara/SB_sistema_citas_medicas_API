@@ -23,6 +23,7 @@ public class PacienteController {
         return pacienteService.listarPacientes();
     }
     
+    
     @PostMapping
 	public ResponseEntity<Paciente> registrarPaciente(@RequestBody RegistroPacienteDTO dto) {
 		Paciente paciente = pacienteService.registrarPaciente(dto);

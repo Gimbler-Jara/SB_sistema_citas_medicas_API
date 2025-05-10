@@ -16,7 +16,6 @@ public class EspecialidadController {
     @Autowired
     private EspecialidadService especialidadService;
 
-    // LISTAR TODAS
     @GetMapping
     public ResponseEntity<List<Especialidad>> listarEspecialidades() {
         return especialidadService.listarEspecialidades();

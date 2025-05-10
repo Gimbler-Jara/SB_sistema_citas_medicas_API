@@ -16,7 +16,6 @@ public class DiaSemanaController {
 	@Autowired
 	private DiaSemanaService diaSemanaService;
 
-	// ENDPOINT PARA LISTAR TODOS LOS DÍAS DE LA SEMANA
 	@GetMapping
 	public ResponseEntity<List<DiaSemana>> ListarDiasSemana() {
 		return diaSemanaService.ListarDiasSemana();

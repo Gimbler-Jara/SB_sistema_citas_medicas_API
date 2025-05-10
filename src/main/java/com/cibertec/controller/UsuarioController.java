@@ -20,6 +20,7 @@ public class UsuarioController {
 		return usuarioService.buscarPorEmail(user); 
 	}
 	
+	
 	@PutMapping("cambiar-estado-usuario/{id}")
 	public ResponseEntity<?> cambiarEstado(@PathVariable("id") Integer idUsuario) {
 	    return usuarioService.cambiarEstadoUsuario(idUsuario);

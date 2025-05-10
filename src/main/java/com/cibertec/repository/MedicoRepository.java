@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import com.cibertec.dto.DiasDisponiblesPorMedicoDTO;
 import com.cibertec.dto.DisponibilidadCitaPorMedicoDTO;
@@ -14,7 +15,7 @@ import com.cibertec.dto.MedicosPorEspecialidadDTO;
 import com.cibertec.model.Especialidad;
 import com.cibertec.model.Medico;
 
-
+@Repository
 public interface MedicoRepository extends JpaRepository<Medico, Integer> {
 
 	@Query(value = "CALL sp_consultar_especialidad_por_id_medico(:idMedico)", nativeQuery = true)

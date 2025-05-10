@@ -33,13 +33,11 @@ public class CitaMedicaController {
 				req.isActivo());
 	}
 	
-
 	@PostMapping("/agendar-cita")
 	public ResponseEntity<?> agendarCita(@RequestBody AgendarCitaRequestDTO req) {
 		return service.agendarCita(req.getIdMedico(), req.getIdPaciente(), req.getFecha(), req.getIdHora());
 	}
 
-	
 	@PutMapping("/cambiar-estado-cita-reservado-atendido/{idCita}")
 	public ResponseEntity<?> cambiarEstadoCitaReservadoAtendio(@PathVariable  int idCita) {
 		return service.cambiarEstadoCitaReservadoAtendio(idCita);

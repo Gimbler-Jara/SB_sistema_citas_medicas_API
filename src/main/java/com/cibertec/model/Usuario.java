@@ -26,6 +26,8 @@ public class Usuario {
     private LocalDate birthDate;
     private String gender;
     private String telefono;
+    
+    @Column(unique = true)
     private String email;
 
     @Column(name = "password_hash")

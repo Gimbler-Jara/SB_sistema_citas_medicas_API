@@ -32,14 +32,19 @@ import com.cibertec.repository.UsuarioRepository;
 
 @Service
 public class MedicoService {
+	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+	
 	@Autowired
 	private MedicoRepository medicoRepository;
+	
 	@Autowired
 	private DocumentTypeRepository documentTypeRepository;
+	
 	@Autowired
 	private RolRepository rolRepository;
+	
 	@Autowired
 	private EspecialidadRepository especialidadRepository;
 
@@ -66,11 +71,9 @@ public class MedicoService {
 		}
 
 		// 1. Recuperar entidades relacionadas
-		DocumentType documentType = documentTypeRepository.findById(dto.getDocumentTypeId())
-				.orElseThrow(() -> new RuntimeException("Tipo de documento no encontrado"));
+		DocumentType documentType = documentTypeRepository.findById(dto.getDocumentTypeId()).orElseThrow(() -> new RuntimeException("Tipo de documento no encontrado"));
 		Rol rol = rolRepository.findById(2).orElseThrow(() -> new RuntimeException("Rol médico no encontrado"));
-		Especialidad especialidad = especialidadRepository.findById(dto.getEspecialidadId())
-				.orElseThrow(() -> new RuntimeException("Especialidad no encontrada"));
+		Especialidad especialidad = especialidadRepository.findById(dto.getEspecialidadId()).orElseThrow(() -> new RuntimeException("Especialidad no encontrada"));
 
 		// 2. Crear usuario
 		Usuario usuario = new Usuario();

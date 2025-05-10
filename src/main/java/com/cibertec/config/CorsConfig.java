@@ -17,19 +17,16 @@ public class CorsConfig {
 
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.csrf(AbstractHttpConfigurer::disable) // ✅ primero CSRF desactivado
-				.cors(withDefaults()) // ✅ luego CORS habilitado
-				.authorizeHttpRequests(auth -> auth
-						.requestMatchers(
-								"/api/pacientes/**", 
-								"/api/usuarios/**", 
-								"/api/medicos/**", 
-								"/api/cita-medica/**",
-								"/api/document-types/**", 
-								"/api/especialidades/**", 
-								"/api/diasSemana/**"
-)
-						.permitAll().anyRequest().authenticated());
+		http.csrf(AbstractHttpConfigurer::disable).cors(withDefaults()).authorizeHttpRequests(auth -> auth
+				.requestMatchers(
+						"/api/pacientes/**", 
+						"/api/usuarios/**", 
+						"/api/medicos/**", 
+						"/api/cita-medica/**",
+						"/api/document-types/**", 
+						"/api/especialidades/**", 
+						"/api/diasSemana/**").permitAll()
+				.anyRequest().authenticated());
 		return http.build();
 	}
 

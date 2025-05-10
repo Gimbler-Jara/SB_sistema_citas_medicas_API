@@ -27,47 +27,53 @@ public class MedicoController {
 	@Autowired
 	private MedicoService medicoService;
 	
-	
-	@GetMapping
+
+    @GetMapping
     public ResponseEntity<List<Medico>> listarMedicos() {
         return medicoService.listarMedicos();
     }
-	
-	@PostMapping
-	public ResponseEntity<Medico> registrarMedico(@RequestBody RegistroMedicoDTO dto) {
-		Medico medico = medicoService.registrarMedico(dto);
-		return ResponseEntity.ok(medico);
-	}
-	
-	@PutMapping("/{id}")
-	public ResponseEntity<?> actualizarMedico(@PathVariable Integer id, @RequestBody MedicoActualizacionDTO dto) {
-	    return medicoService.actualizarMedico(id, dto);
-	}
 
-	
-	@GetMapping("/especialidad_por_id_medico/{idMedico}")
-	public ResponseEntity<?> obtenerEspecialidadPorIdMedico(@PathVariable("idMedico") int idMedico) {
-		return medicoService.obtenerEspecialidadPorIdMedico(idMedico);
-	}
-	
-	@GetMapping("/medicos-por-especialidad/{idEspecialidad}")
-	public ResponseEntity<?> listarMedicosPorEspecialidad(@PathVariable("idEspecialidad") int idEspecialidad) {
-		return medicoService.listarMedicosPorEspecialidad(idEspecialidad);
-	}
-	
-	@GetMapping("/dias-disponibles/{idMedico}")
-	public ResponseEntity<?> listarDiasDisponibles(@PathVariable("idMedico") int idMedico) {
-		return medicoService.listarDiasDisponiblesPorMedico(idMedico);
-	}
 
-	@GetMapping("/horas-disponibles")
-	public ResponseEntity<?> listarHorasDisponibles(@RequestParam int idMedico, @RequestParam String fecha) {
-		return medicoService.listarHorasDisponibles(idMedico, LocalDate.parse(fecha));
-	}
-	
-	@GetMapping("/horario-trabajo-medico/{idMedico}")
+    @PostMapping
+    public ResponseEntity<Medico> registrarMedico(@RequestBody RegistroMedicoDTO dto) {
+        Medico medico = medicoService.registrarMedico(dto);
+        return ResponseEntity.ok(medico);
+    }
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizarMedico(@PathVariable Integer id, @RequestBody MedicoActualizacionDTO dto) {
+        return medicoService.actualizarMedico(id, dto);
+    }
+
+
+    @GetMapping("/especialidad_por_id_medico/{idMedico}")
+    public ResponseEntity<?> obtenerEspecialidadPorIdMedico(@PathVariable("idMedico") int idMedico) {
+        return medicoService.obtenerEspecialidadPorIdMedico(idMedico);
+    }
+
+
+    @GetMapping("/horario-trabajo-medico/{idMedico}")
     public ResponseEntity<?> listarHorariosDeTrabajoMedico(@PathVariable Integer idMedico) {
         return medicoService.listarHorariosDeTrabajoMedico(idMedico);
+    }
+
+
+    @GetMapping("/medicos-por-especialidad/{idEspecialidad}")
+    public ResponseEntity<?> listarMedicosPorEspecialidad(@PathVariable("idEspecialidad") int idEspecialidad) {
+        return medicoService.listarMedicosPorEspecialidad(idEspecialidad);
+    }
+
+
+    @GetMapping("/dias-disponibles/{idMedico}")
+    public ResponseEntity<?> listarDiasDisponibles(@PathVariable("idMedico") int idMedico) {
+        return medicoService.listarDiasDisponiblesPorMedico(idMedico);
+    }
+
+
+    @GetMapping("/horas-disponibles")
+    public ResponseEntity<?> listarHorasDisponibles(@RequestParam int idMedico, @RequestParam String fecha) {
+        return medicoService.listarHorasDisponibles(idMedico, LocalDate.parse(fecha));
     }
 
 }

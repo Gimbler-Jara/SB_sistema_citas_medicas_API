@@ -18,7 +18,9 @@ public class EspecialidadService {
 
     // LISTAR TODAS LAS ESPECIALIDADES
     public ResponseEntity<List<Especialidad>> listarEspecialidades() {
+    	 System.out.println("Entrando al endpoint de especialidades");
         List<Especialidad> lista = especialidadRepository.findAll(); 
+        System.out.println("Cantidad retornada: " + lista.size());
         if (lista.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {

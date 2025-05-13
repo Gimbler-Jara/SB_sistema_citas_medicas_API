@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import com.cibertec.dto.*;
 import com.cibertec.service.CitaMedicaService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/cita-medica")
 public class CitaMedicaController {
@@ -38,10 +40,12 @@ public class CitaMedicaController {
 		return service.agendarCita(req.getIdMedico(), req.getIdPaciente(), req.getFecha(), req.getIdHora());
 	}
 
-	@PutMapping("/cambiar-estado-cita-reservado-atendido/{idCita}")
-	public ResponseEntity<?> cambiarEstadoCitaReservadoAtendio(@PathVariable  int idCita) {
-		return service.cambiarEstadoCitaReservadoAtendio(idCita);
-	}
+	
+	@PostMapping("/cambiar-estado-cita-reservado-atendido/{idCita}")
+    public ResponseEntity<Void> atenderCita(@PathVariable("idCita") int idCita,@Valid @RequestBody DiagnosticoRequestDTO request) {
+        service.atenderCitaConRecetaCompleta(idCita, request.getDiagnostico(), request.getMedicamentos());
+        return ResponseEntity.ok().build();
+    }
 
 	@DeleteMapping("/eliminar-cita/{idCita}")
 	public ResponseEntity<?> eliminarCita(@PathVariable("idCita") int idCita) {
@@ -54,5 +58,11 @@ public class CitaMedicaController {
 	}
 
 	
+	@GetMapping("/historial/{idCita}")
+	public ResponseEntity<HistorialCitaDTO> obtenerHistorial(@PathVariable("idCita") int idCita) {
+	    HistorialCitaDTO dto = service.obtenerHistorialPorCita(idCita);
+	    return ResponseEntity.ok(dto);
+	}
+
 
 }

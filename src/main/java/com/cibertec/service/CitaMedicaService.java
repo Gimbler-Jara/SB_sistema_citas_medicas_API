@@ -12,13 +12,23 @@ import org.springframework.stereotype.Service;
 
 import com.cibertec.dto.CitasAgendadasResponseDTO;
 import com.cibertec.dto.CitasReservadasPorPacienteResponseDTO;
+import com.cibertec.dto.HistorialCitaDTO;
+import com.cibertec.dto.MedicamentoInputDTO;
 import com.cibertec.repository.CitaMedicaRepository;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.ParameterMode;
+import jakarta.persistence.StoredProcedureQuery;
 
 @Service
 public class CitaMedicaService {
 
 	@Autowired
 	private CitaMedicaRepository procedimientosRepository;
+	
+	@Autowired
+    private EntityManager entityManager;
 
 	// 1. Listar citas agendadaspara mostrar al medico
 	public ResponseEntity<List<CitasAgendadasResponseDTO>> listarCitasAgendadas(int idMedico) {
@@ -89,17 +99,53 @@ public class CitaMedicaService {
 		}
 	}
 
-	// 8. Cambiar estado cita a reservado
-	public ResponseEntity<Void> cambiarEstadoCitaReservadoAtendio(int idCita) {
-		try {
-			procedimientosRepository.cambiarEstadoCitaReservadoAtendio(idCita);
-			return ResponseEntity.status(HttpStatus.OK).build();
-		} catch (Exception e) {
-			System.out.println("Error al cambiar estado de cita: " + e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
-	}
+	// 8. Cambiar estado cita a reservado	
+	public void atenderCitaConRecetaCompleta(Integer idCita, String descripcionDiagnostico, List<MedicamentoInputDTO> medicamentos) {
+        // Validaciones básicas
+        if (descripcionDiagnostico == null || descripcionDiagnostico.isBlank()) {
+            throw new IllegalArgumentException("El diagnóstico no puede estar vacío.");
+        }
 
+        if (medicamentos == null || medicamentos.isEmpty()) {
+            throw new IllegalArgumentException("Debe proporcionar al menos un medicamento.");
+        }
+
+        Integer recetaId = atenderCitaYCrearReceta(idCita, descripcionDiagnostico);
+
+        for (MedicamentoInputDTO m : medicamentos) {
+            if (m.getMedicamento() != null && !m.getMedicamento().isBlank()) {
+                agregarMedicamentoAReceta(recetaId, m.getMedicamento(), m.getIndicaciones());
+            }
+        }
+    }
+
+    private Integer atenderCitaYCrearReceta(Integer idCita, String descripcionDiagnostico) {
+        StoredProcedureQuery query = entityManager
+                .createStoredProcedureQuery("sp_atender_cita_y_crear_receta")
+                .registerStoredProcedureParameter("idCita", Integer.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("descripcionDiagnostico", String.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("recetaId", Integer.class, ParameterMode.OUT)
+                .setParameter("idCita", idCita)
+                .setParameter("descripcionDiagnostico", descripcionDiagnostico);
+
+        query.execute();
+        return (Integer) query.getOutputParameterValue("recetaId");
+    }
+
+    private void agregarMedicamentoAReceta(Integer recetaId, String medicamento, String indicaciones) {
+        StoredProcedureQuery query = entityManager
+                .createStoredProcedureQuery("sp_agregar_medicamento_a_receta")
+                .registerStoredProcedureParameter("recetaId", Integer.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("medicamento", String.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("indicaciones", String.class, ParameterMode.IN)
+                .setParameter("recetaId", recetaId)
+                .setParameter("medicamento", medicamento)
+                .setParameter("indicaciones", indicaciones);
+
+        query.execute();
+    }
+	
+    
 	// 9. Eliminar cita reservada
 	public ResponseEntity<Void> eliminarCitaReservado(int idCita) {
 		try {
@@ -122,4 +168,16 @@ public class CitaMedicaService {
 			return ResponseEntity.status(HttpStatus.OK).body(citas);
 		}
 	}
+	
+	
+	public HistorialCitaDTO obtenerHistorialPorCita(int idCita) {
+	    HistorialCitaDTO resultado = procedimientosRepository.obtenerHistorialPorCita(idCita);
+
+	    if (resultado == null) {
+	        throw new EntityNotFoundException("No se encontró historial para la cita con ID: " + idCita);
+	    }
+
+	    return resultado;
+	}
+
 }

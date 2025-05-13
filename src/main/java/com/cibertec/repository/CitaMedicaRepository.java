@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.cibertec.dto.CitasAgendadasResponseDTO;
 import com.cibertec.dto.CitasReservadasPorPacienteResponseDTO;
+import com.cibertec.dto.HistorialCitaDTO;
 import com.cibertec.model.CitaMedica;
 
 import jakarta.transaction.Transactional;
@@ -45,12 +46,14 @@ public interface CitaMedicaRepository extends JpaRepository<CitaMedica, Integer>
 			@Param("idHora") int idHora);
 
 	
-
-	// 9. Cambiar estado cita a Reservado
 	@Modifying
-	@Transactional
-	@Query(value = "CALL sp_cambiar_estado_cita_Reservado_a_atendido(:idCita)", nativeQuery = true)
-	void cambiarEstadoCitaReservadoAtendio(@Param("idCita") int idCita);
+    @Transactional
+    @Query(value = "CALL sp_agregar_medicamento_a_receta(:recetaId, :medicamento, :indicaciones)", nativeQuery = true)
+    void agregarMedicamento(@Param("recetaId") int recetaId,
+                            @Param("medicamento") String medicamento,
+                            @Param("indicaciones") String indicaciones);
+	
+	
 
 	// 10. Eliminar cita reservada
 	@Modifying
@@ -62,6 +65,12 @@ public interface CitaMedicaRepository extends JpaRepository<CitaMedica, Integer>
 	// 11. Listar citas porgramadas por pacientes
 	@Query(value = "CALL sp_listar_citas_programadas_por_paciente(:idPaciente)", nativeQuery = true)
 	List<CitasReservadasPorPacienteResponseDTO> listarCitasProgramadasPorPaciente(@Param("idPaciente") int idPaciente);
+	
+	
+	//Obtener el diagnostico y receta medica
+	@Query(value = "CALL sp_obtener_historial_por_cita(:idCita)", nativeQuery = true)
+	HistorialCitaDTO obtenerHistorialPorCita(@Param("idCita") int idCita);
+
 
 	
 }

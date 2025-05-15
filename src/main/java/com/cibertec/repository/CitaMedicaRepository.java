@@ -70,6 +70,9 @@ public interface CitaMedicaRepository extends JpaRepository<CitaMedica, Integer>
 	//Obtener el diagnostico y receta medica
 	@Query(value = "CALL sp_obtener_historial_por_cita(:idCita)", nativeQuery = true)
 	HistorialCitaDTO obtenerHistorialPorCita(@Param("idCita") int idCita);
+	
+	@Query(value = "CALL sp_obtener_historial_por_paciente(:idPaciente)", nativeQuery = true)
+	List<HistorialCitaDTO> obtenerHistorialPorPaciente(@Param("idPaciente") int idPaciente);
 
 
 	

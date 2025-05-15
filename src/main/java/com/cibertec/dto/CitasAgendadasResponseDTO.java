@@ -14,7 +14,7 @@ public class CitasAgendadasResponseDTO {
 	public Date fecha;
 	public String hora;
 	public String estado;
-	public String pacienteID;
+	public int pacienteID;
 	public String pacienteNombre;
 	public int medicoId;
 	public String medicoNombre;

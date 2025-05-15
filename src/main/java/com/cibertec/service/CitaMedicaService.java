@@ -179,5 +179,15 @@ public class CitaMedicaService {
 
 	    return resultado;
 	}
+	
+	public List<HistorialCitaDTO> obtenerHistorialPorPaciente(int idPaciente) {
+		List<HistorialCitaDTO> resultado = procedimientosRepository.obtenerHistorialPorPaciente(idPaciente);
+
+	    if (resultado == null) {
+	        throw new EntityNotFoundException("No se encontró historial para la cita con ID: " + idPaciente);
+	    }
+
+	    return resultado;
+	}
 
 }

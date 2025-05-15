@@ -6,27 +6,32 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.cibertec.security.JwtAuthenticationFilter;
+
 import static org.springframework.security.config.Customizer.withDefaults;
 
-@Configuration
+import org.springframework.beans.factory.annotation.Autowired;
+
+@Configuration 
 @EnableWebSecurity
 public class CorsConfig {
+	
+	@Autowired
+	private JwtAuthenticationFilter jwtAuthenticationFilter;
 
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable).cors(withDefaults()).authorizeHttpRequests(auth -> auth
 				.requestMatchers(
-						"/api/pacientes/**", 
-						"/api/usuarios/**", 
-						"/api/medicos/**", 
-						"/api/cita-medica/**",
-						"/api/document-types/**", 
-						"/api/especialidades/**", 
-						"/api/diasSemana/**").permitAll()
-				.anyRequest().authenticated());
+						"/api/usuarios/**",
+						"/api/cita-medica/historial/**"
+						).permitAll()
+				.anyRequest().authenticated())
+		.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
 
@@ -43,3 +48,13 @@ public class CorsConfig {
 		};
 	}
 }
+
+/*
+"/api/usuarios/**", 
+"/api/medicos/**", 
+"/api/cita-medica/**",
+"/api/pacientes/**", 
+"/api/document-types/**", 
+"/api/especialidades/**", 
+"/api/diasSemana/**"
+*/

@@ -1,6 +1,8 @@
 package com.cibertec.controller;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +63,12 @@ public class CitaMedicaController {
 	@GetMapping("/historial/{idCita}")
 	public ResponseEntity<HistorialCitaDTO> obtenerHistorial(@PathVariable("idCita") int idCita) {
 	    HistorialCitaDTO dto = service.obtenerHistorialPorCita(idCita);
+	    return ResponseEntity.ok(dto);
+	}
+	
+	@GetMapping("/historial-paciente/{idPaciente}")
+	public ResponseEntity<List<HistorialCitaDTO>> obtenerHistorialPorPaciente(@PathVariable("idPaciente") int idPaciente) {
+		List<HistorialCitaDTO> dto = service.obtenerHistorialPorPaciente(idPaciente);
 	    return ResponseEntity.ok(dto);
 	}
 

@@ -22,5 +22,8 @@ public class Medico {
     @ManyToOne
     @JoinColumn(name = "especialidad_id")
     private Especialidad especialidad;
+    
+    @Column(name = "url_firma_digital", length = 255)
+    private String urlFirmaDigital;
 }
 

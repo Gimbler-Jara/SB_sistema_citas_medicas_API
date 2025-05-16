@@ -1,5 +1,6 @@
 package com.cibertec.service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.cibertec.dto.DiasDisponiblesPorMedicoDTO;
@@ -47,6 +49,9 @@ public class MedicoService {
 	
 	@Autowired
 	private EspecialidadRepository especialidadRepository;
+	
+	@Autowired
+	private FirebaseStorageService firebaseStorageService;
 
 	private final PasswordEncoder passwordEncoder;
 
@@ -62,8 +67,17 @@ public class MedicoService {
 			return ResponseEntity.status(HttpStatus.OK).body(medicos);
 		}
 	}
+	
+	public ResponseEntity<Optional<Medico>> obtenerMedicoPorId(Integer idUsuario) {
+		Optional<Medico> medicos = medicoRepository.findById(idUsuario);
+		if (medicos.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		} else {
+			return ResponseEntity.status(HttpStatus.OK).body(medicos);
+		}
+	}
 
-	public Medico registrarMedico(RegistroMedicoDTO dto) {
+	public Medico registrarMedico(RegistroMedicoDTO dto, MultipartFile archivoFirmaDigital) throws IOException {
 
 		// 0. Verificar si ya existe un usuario con ese email
 		if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
@@ -97,6 +111,11 @@ public class MedicoService {
 		Medico medico = new Medico();
 		medico.setUsuario(usuarioGuardado);
 		medico.setEspecialidad(especialidad);
+		
+		if(archivoFirmaDigital != null && !archivoFirmaDigital.isEmpty()) {
+			FirebaseStorageService.FirebaseUploadResult firma = firebaseStorageService.uploadFile(archivoFirmaDigital, usuarioGuardado.getId());
+			medico.setUrlFirmaDigital(firma.path());
+		}
 
 		return medicoRepository.save(medico);
 	}
@@ -173,5 +192,15 @@ public class MedicoService {
 		response.put("data", lista);
 		return ResponseEntity.ok(response);
 	}
+	
+	public ResponseEntity<?> obtenerUrlFirmaDigital(String urlStorage) {
+		String url = firebaseStorageService.getPublicUrl(urlStorage);
+
+		if (url.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		} else {
+			return ResponseEntity.status(HttpStatus.OK).body(url);
+		}
+	} 
 
 }

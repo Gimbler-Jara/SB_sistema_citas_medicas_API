@@ -121,27 +121,65 @@ public class MedicoService {
 	}
 
 	
-	public ResponseEntity<?> actualizarMedico(Integer id, MedicoActualizacionDTO dto) {
+	public ResponseEntity<?> actualizarMedico(Integer id, MedicoActualizacionDTO dto, MultipartFile archivoFirmaDigital) throws IOException {
 		Optional<Medico> medicoOpt = medicoRepository.findById(id);
-		if (medicoOpt.isPresent()) {
-			Medico medico = medicoOpt.get();
-			Usuario usuario = medico.getUsuario();
-			usuario.setFirstName(dto.getFirstName());
-			usuario.setMiddleName(dto.getMiddleName());
-			usuario.setLastName(dto.getLastName());
-			usuario.setTelefono(dto.getTelefono());
-			if (dto.getEspecialidadId() != null) {
-				Especialidad esp = especialidadRepository.findById(dto.getEspecialidadId()).orElse(null);
-				medico.setEspecialidad(esp);
-			}
-			usuarioRepository.save(usuario);
-			medicoRepository.save(medico); 
-			return ResponseEntity.ok(Map.of("success", true, "message", "Médico actualizado correctamente"));
-		} else {
+		if (medicoOpt.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(Map.of("success", false, "message", "Médico no encontrado"));
+				.body(Map.of("success", false, "message", "Médico no encontrado"));
 		}
+
+		Medico medico = medicoOpt.get();
+		Usuario usuario = medico.getUsuario();
+
+		// Actualizar campos del usuario si no son nulos
+		if (dto.getFirstName() != null) usuario.setFirstName(dto.getFirstName());
+		if (dto.getMiddleName() != null) usuario.setMiddleName(dto.getMiddleName());
+		if (dto.getLastName() != null) usuario.setLastName(dto.getLastName());
+		if (dto.getTelefono() != null) usuario.setTelefono(dto.getTelefono());
+		if (dto.getBirthDate() != null) usuario.setBirthDate(dto.getBirthDate());
+		if (dto.getGender() != null) usuario.setGender(dto.getGender());
+		if (dto.getDni() != null) usuario.setDni(dto.getDni());
+		if (dto.getEmail() != null) usuario.setEmail(dto.getEmail());
+
+		if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+			usuario.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
+		}
+
+		if (dto.getDocumentTypeId() != null) {
+			DocumentType tipoDoc = documentTypeRepository.findById(dto.getDocumentTypeId())
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo de documento inválido"));
+			usuario.setDocumentType(tipoDoc);
+		}
+
+		if (dto.getEspecialidadId() != null) {
+			Especialidad especialidad = especialidadRepository.findById(dto.getEspecialidadId())
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Especialidad no válida"));
+			medico.setEspecialidad(especialidad);
+		}
+
+		// Reemplazar firma digital si se recibe
+		if (archivoFirmaDigital != null && !archivoFirmaDigital.isEmpty()) {
+			// Eliminar firma anterior si existía
+			if (medico.getUrlFirmaDigital() != null && !medico.getUrlFirmaDigital().isBlank()) {
+				// Convertir URL pública a path (inverso a getPublicUrl)
+				String urlAnterior = medico.getUrlFirmaDigital();
+				String prefix = String.format("https://firebasestorage.googleapis.com/v0/b/%s/o/", firebaseStorageService.getBucketName());
+				if (urlAnterior.startsWith(prefix)) {
+					String path = urlAnterior.substring(prefix.length(), urlAnterior.indexOf("?alt=media"));
+					firebaseStorageService.deleteFile(path);
+				}
+			}
+
+			FirebaseStorageService.FirebaseUploadResult firma = firebaseStorageService.uploadFile(archivoFirmaDigital, usuario.getId());
+			medico.setUrlFirmaDigital(firma.path()); // Puedes guardar firma.path() si lo deseas como referencia interna
+		}
+
+		usuarioRepository.save(usuario);
+		medicoRepository.save(medico);
+
+		return ResponseEntity.ok(Map.of("success", true, "message", "Médico actualizado correctamente"));
 	}
+
 
 
 	public ResponseEntity<Especialidad> obtenerEspecialidadPorIdMedico(int idMedico) {

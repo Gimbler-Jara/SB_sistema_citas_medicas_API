@@ -32,7 +32,6 @@ public class PacienteController {
     
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarPaciente(@PathVariable Integer id, @RequestBody PacienteActualizacionDTO dto) {
-    	System.out.println("DTO recibido: " + dto);
         return pacienteService.actualizarPaciente(id, dto);
     }
 

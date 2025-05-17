@@ -1,5 +1,7 @@
 package com.cibertec.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -83,22 +85,51 @@ public class PacienteService {
 		return pacienteRepository.save(paciente);
 	}
 
-
+	
 	public ResponseEntity<?> actualizarPaciente(Integer id, PacienteActualizacionDTO dto) {
 		Optional<Paciente> pacienteOpt = pacienteRepository.findById(id);
-		if (pacienteOpt.isPresent()) {
-			Paciente paciente = pacienteOpt.get();
-			Usuario usuario = paciente.getUsuario();
-			usuario.setFirstName(dto.getFirstName());
-			usuario.setMiddleName(dto.getMiddleName());
-			usuario.setLastName(dto.getLastName());
-			usuario.setTelefono(dto.getTelefono());
-			usuarioRepository.save(usuario);
-			return ResponseEntity.ok(Map.of("success", true, "message", "Paciente actualizado correctamente"));
-		} else {
+
+		if (pacienteOpt.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(Map.of("success", false, "message", "Paciente no encontrado"));
 		}
+
+		Paciente paciente = pacienteOpt.get();
+		Usuario usuario = paciente.getUsuario();
+
+		// Actualizar campos condicionalmente
+		if (dto.getFirstName() != null) usuario.setFirstName(dto.getFirstName());
+		if (dto.getMiddleName() != null) usuario.setMiddleName(dto.getMiddleName());
+		if (dto.getLastName() != null) usuario.setLastName(dto.getLastName());
+		if (dto.getTelefono() != null) usuario.setTelefono(dto.getTelefono());
+		if (dto.getGender() != null) usuario.setGender(dto.getGender());
+		if (dto.getDni() != null) usuario.setDni(dto.getDni());
+		if (dto.getEmail() != null) usuario.setEmail(dto.getEmail());
+
+		// Convertir string a LocalDate si es válido
+		if (dto.getBirthDate() != null && !dto.getBirthDate().isBlank()) {
+			try {
+				LocalDate fecha = LocalDate.parse(dto.getBirthDate());
+				usuario.setBirthDate(fecha);
+			} catch (DateTimeParseException e) {
+				return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Fecha de nacimiento inválida"));
+			}
+		}
+
+		// Actualizar tipo de documento si aplica
+		if (dto.getDocumentTypeId() != null) {
+			DocumentType tipoDoc = documentTypeRepository.findById(dto.getDocumentTypeId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo de documento inválido"));
+			usuario.setDocumentType(tipoDoc);
+		}
+
+		// Si se proporciona nueva contraseña, encriptarla
+		if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+			usuario.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
+		}
+
+		usuarioRepository.save(usuario);
+		return ResponseEntity.ok(Map.of("success", true, "message", "Paciente actualizado correctamente"));
 	}
+
 
 }

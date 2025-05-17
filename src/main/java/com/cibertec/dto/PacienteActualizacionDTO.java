@@ -9,7 +9,11 @@ public class PacienteActualizacionDTO {
 	private String middleName;
 	private String lastName;
 	private String telefono;
-	private String  birthDate;
+	private String birthDate; 
 	private String gender;
+	private String dni;
+	private String email;
+    private String password;
+	private Integer documentTypeId;
 
 }

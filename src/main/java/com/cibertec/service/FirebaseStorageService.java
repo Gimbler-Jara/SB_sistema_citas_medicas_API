@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 
 @Service
 public class FirebaseStorageService {
@@ -31,11 +30,11 @@ public class FirebaseStorageService {
             extension = originalFilename.substring(dotIndex);
         }
 
-        // Generar un nombre único usando UUID
-        String uniqueFilename = UUID.randomUUID().toString() + extension;
+        String fixedFilename = "firma" + extension; 
 
-        // Ruta completa en el bucket
-        String fullPath = "firmaMedico-springboot/" + idMedico + "/" + uniqueFilename;
+        // Ruta completa
+        String fullPath = "firmaMedico-springboot/" + idMedico + "/" + fixedFilename;
+
         Bucket bucket = StorageClient.getInstance().bucket(bucketName);
         Blob blob = bucket.create(fullPath, file.getBytes(), file.getContentType());
 
@@ -69,5 +68,10 @@ public class FirebaseStorageService {
             throw new RuntimeException("Error al generar la URL de descarga pública desde Firebase", e);
         }
     }
+    
+    public String getBucketName() {
+    	return bucketName;
+    }
+
 
 }

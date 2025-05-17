@@ -49,6 +49,7 @@ public class CorsConfig {
 	}
 }
 
+//esto es un comentario adicional
 /*
 "/api/usuarios/**", 
 "/api/medicos/**", 

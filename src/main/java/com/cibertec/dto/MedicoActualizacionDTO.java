@@ -18,4 +18,5 @@ public class MedicoActualizacionDTO {
 	private String email;
 	private String password;
 	private Integer especialidadId;
+	private String cmp;
 }

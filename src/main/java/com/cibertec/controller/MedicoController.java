@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -33,10 +32,9 @@ public class MedicoController {
 
 	@Autowired
 	private MedicoService medicoService;
-	
+
 	@Autowired
 	private ObjectMapper objectMapper;
-
 
 	@GetMapping
 	public ResponseEntity<List<Medico>> listarMedicos() {
@@ -49,10 +47,19 @@ public class MedicoController {
 	}
 
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<Medico> registrarMedico(@ModelAttribute RegistroMedicoDTO dto,
-			@RequestParam("archivoFirmaDigital") MultipartFile archivoFirmaDigital) throws IOException {
-		Medico medico = medicoService.registrarMedico(dto, archivoFirmaDigital);
-		return ResponseEntity.ok(medico);
+	public ResponseEntity<?> registrarMedico(@RequestPart("datos") String datosJson,
+			@RequestPart("archivoFirmaDigital") MultipartFile archivoFirmaDigital) {
+
+		try {
+			RegistroMedicoDTO dto = objectMapper.readValue(datosJson, RegistroMedicoDTO.class);
+			Medico medico = medicoService.registrarMedico(dto, archivoFirmaDigital);
+			return ResponseEntity.ok(medico);
+		} catch (JsonProcessingException e) {
+			return ResponseEntity.badRequest().body(Map.of("success", false, "message", "JSON inválido en 'datos'"));
+		} catch (IOException e) {
+			return ResponseEntity.internalServerError()
+					.body(Map.of("success", false, "message", "Error al registrar médico"));
+		}
 	}
 
 	@GetMapping("/obtnerFirma")
@@ -61,17 +68,16 @@ public class MedicoController {
 	}
 
 	@PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<?> actualizarMedico(
-	        @PathVariable Integer id,
-	        @RequestPart("datos") String datosJson,
-	        @RequestPart(value = "archivoFirmaDigital", required = false) MultipartFile archivoFirmaDigital) throws IOException {
-	    
-	    try {
-	        MedicoActualizacionDTO dto = objectMapper.readValue(datosJson, MedicoActualizacionDTO.class);
-	        return medicoService.actualizarMedico(id, dto, archivoFirmaDigital);
-	    } catch (JsonProcessingException e) {
-	        return ResponseEntity.badRequest().body(Map.of("success", false, "message", "JSON inválido en 'datos'"));
-	    }
+	public ResponseEntity<?> actualizarMedico(@PathVariable Integer id, @RequestPart("datos") String datosJson,
+			@RequestPart(value = "archivoFirmaDigital", required = false) MultipartFile archivoFirmaDigital)
+			throws IOException {
+
+		try {
+			MedicoActualizacionDTO dto = objectMapper.readValue(datosJson, MedicoActualizacionDTO.class);
+			return medicoService.actualizarMedico(id, dto, archivoFirmaDigital);
+		} catch (JsonProcessingException e) {
+			return ResponseEntity.badRequest().body(Map.of("success", false, "message", "JSON inválido en 'datos'"));
+		}
 	}
 
 	@GetMapping("/especialidad_por_id_medico/{idMedico}")

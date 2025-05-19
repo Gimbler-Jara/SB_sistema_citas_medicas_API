@@ -25,5 +25,7 @@ public class Medico {
     
     @Column(name = "url_firma_digital", length = 255)
     private String urlFirmaDigital;
+    
+    private String cmp;
 }
 

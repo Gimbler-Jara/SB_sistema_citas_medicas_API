@@ -34,22 +34,22 @@ import com.cibertec.repository.UsuarioRepository;
 
 @Service
 public class MedicoService {
-	
+
 	@Autowired
 	private UsuarioRepository usuarioRepository;
-	
+
 	@Autowired
 	private MedicoRepository medicoRepository;
-	
+
 	@Autowired
 	private DocumentTypeRepository documentTypeRepository;
-	
+
 	@Autowired
 	private RolRepository rolRepository;
-	
+
 	@Autowired
 	private EspecialidadRepository especialidadRepository;
-	
+
 	@Autowired
 	private FirebaseStorageService firebaseStorageService;
 
@@ -67,7 +67,7 @@ public class MedicoService {
 			return ResponseEntity.status(HttpStatus.OK).body(medicos);
 		}
 	}
-	
+
 	public ResponseEntity<Optional<Medico>> obtenerMedicoPorId(Integer idUsuario) {
 		Optional<Medico> medicos = medicoRepository.findById(idUsuario);
 		if (medicos.isEmpty()) {
@@ -85,9 +85,11 @@ public class MedicoService {
 		}
 
 		// 1. Recuperar entidades relacionadas
-		DocumentType documentType = documentTypeRepository.findById(dto.getDocumentTypeId()).orElseThrow(() -> new RuntimeException("Tipo de documento no encontrado"));
+		DocumentType documentType = documentTypeRepository.findById(dto.getDocumentTypeId())
+				.orElseThrow(() -> new RuntimeException("Tipo de documento no encontrado"));
 		Rol rol = rolRepository.findById(2).orElseThrow(() -> new RuntimeException("Rol médico no encontrado"));
-		Especialidad especialidad = especialidadRepository.findById(dto.getEspecialidadId()).orElseThrow(() -> new RuntimeException("Especialidad no encontrada"));
+		Especialidad especialidad = especialidadRepository.findById(dto.getEspecialidadId())
+				.orElseThrow(() -> new RuntimeException("Especialidad no encontrada"));
 
 		// 2. Crear usuario
 		Usuario usuario = new Usuario();
@@ -111,49 +113,59 @@ public class MedicoService {
 		Medico medico = new Medico();
 		medico.setUsuario(usuarioGuardado);
 		medico.setEspecialidad(especialidad);
-		
-		if(archivoFirmaDigital != null && !archivoFirmaDigital.isEmpty()) {
-			FirebaseStorageService.FirebaseUploadResult firma = firebaseStorageService.uploadFile(archivoFirmaDigital, usuarioGuardado.getId());
+		medico.setCmp(dto.getCmp());
+
+		if (archivoFirmaDigital != null && !archivoFirmaDigital.isEmpty()) {
+			FirebaseStorageService.FirebaseUploadResult firma = firebaseStorageService.uploadFile(archivoFirmaDigital,
+					usuarioGuardado.getId());
 			medico.setUrlFirmaDigital(firma.path());
 		}
 
 		return medicoRepository.save(medico);
 	}
 
-	
-	public ResponseEntity<?> actualizarMedico(Integer id, MedicoActualizacionDTO dto, MultipartFile archivoFirmaDigital) throws IOException {
+	public ResponseEntity<?> actualizarMedico(Integer id, MedicoActualizacionDTO dto, MultipartFile archivoFirmaDigital)
+			throws IOException {
 		Optional<Medico> medicoOpt = medicoRepository.findById(id);
 		if (medicoOpt.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				.body(Map.of("success", false, "message", "Médico no encontrado"));
+					.body(Map.of("success", false, "message", "Médico no encontrado"));
 		}
 
 		Medico medico = medicoOpt.get();
 		Usuario usuario = medico.getUsuario();
 
 		// Actualizar campos del usuario si no son nulos
-		if (dto.getFirstName() != null) usuario.setFirstName(dto.getFirstName());
-		if (dto.getMiddleName() != null) usuario.setMiddleName(dto.getMiddleName());
-		if (dto.getLastName() != null) usuario.setLastName(dto.getLastName());
-		if (dto.getTelefono() != null) usuario.setTelefono(dto.getTelefono());
-		if (dto.getBirthDate() != null) usuario.setBirthDate(dto.getBirthDate());
-		if (dto.getGender() != null) usuario.setGender(dto.getGender());
-		if (dto.getDni() != null) usuario.setDni(dto.getDni());
-		if (dto.getEmail() != null) usuario.setEmail(dto.getEmail());
+		if (dto.getFirstName() != null)
+			usuario.setFirstName(dto.getFirstName());
+		if (dto.getMiddleName() != null)
+			usuario.setMiddleName(dto.getMiddleName());
+		if (dto.getLastName() != null)
+			usuario.setLastName(dto.getLastName());
+		if (dto.getTelefono() != null)
+			usuario.setTelefono(dto.getTelefono());
+		if (dto.getBirthDate() != null)
+			usuario.setBirthDate(dto.getBirthDate());
+		if (dto.getGender() != null)
+			usuario.setGender(dto.getGender());
+		if (dto.getDni() != null)
+			usuario.setDni(dto.getDni());
+		if (dto.getEmail() != null)
+			usuario.setEmail(dto.getEmail());
 
 		if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
 			usuario.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
 		}
 
 		if (dto.getDocumentTypeId() != null) {
-			DocumentType tipoDoc = documentTypeRepository.findById(dto.getDocumentTypeId())
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo de documento inválido"));
+			DocumentType tipoDoc = documentTypeRepository.findById(dto.getDocumentTypeId()).orElseThrow(
+					() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tipo de documento inválido"));
 			usuario.setDocumentType(tipoDoc);
 		}
 
 		if (dto.getEspecialidadId() != null) {
 			Especialidad especialidad = especialidadRepository.findById(dto.getEspecialidadId())
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Especialidad no válida"));
+					.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Especialidad no válida"));
 			medico.setEspecialidad(especialidad);
 		}
 
@@ -163,15 +175,21 @@ public class MedicoService {
 			if (medico.getUrlFirmaDigital() != null && !medico.getUrlFirmaDigital().isBlank()) {
 				// Convertir URL pública a path (inverso a getPublicUrl)
 				String urlAnterior = medico.getUrlFirmaDigital();
-				String prefix = String.format("https://firebasestorage.googleapis.com/v0/b/%s/o/", firebaseStorageService.getBucketName());
+				String prefix = String.format("https://firebasestorage.googleapis.com/v0/b/%s/o/",
+						firebaseStorageService.getBucketName());
 				if (urlAnterior.startsWith(prefix)) {
 					String path = urlAnterior.substring(prefix.length(), urlAnterior.indexOf("?alt=media"));
 					firebaseStorageService.deleteFile(path);
 				}
 			}
 
-			FirebaseStorageService.FirebaseUploadResult firma = firebaseStorageService.uploadFile(archivoFirmaDigital, usuario.getId());
-			medico.setUrlFirmaDigital(firma.path()); // Puedes guardar firma.path() si lo deseas como referencia interna
+			FirebaseStorageService.FirebaseUploadResult firma = firebaseStorageService.uploadFile(archivoFirmaDigital,
+					usuario.getId());
+			medico.setUrlFirmaDigital(firma.path()); 
+		}
+
+		if (dto.getCmp() != null) {
+			medico.setCmp(dto.getCmp());
 		}
 
 		usuarioRepository.save(usuario);
@@ -179,8 +197,6 @@ public class MedicoService {
 
 		return ResponseEntity.ok(Map.of("success", true, "message", "Médico actualizado correctamente"));
 	}
-
-
 
 	public ResponseEntity<Especialidad> obtenerEspecialidadPorIdMedico(int idMedico) {
 		Especialidad especialidad = medicoRepository.obtenerEspecialidadPorIdMedico(idMedico);
@@ -230,7 +246,7 @@ public class MedicoService {
 		response.put("data", lista);
 		return ResponseEntity.ok(response);
 	}
-	
+
 	public ResponseEntity<?> obtenerUrlFirmaDigital(String urlStorage) {
 		String url = firebaseStorageService.getPublicUrl(urlStorage);
 
@@ -239,6 +255,6 @@ public class MedicoService {
 		} else {
 			return ResponseEntity.status(HttpStatus.OK).body(url);
 		}
-	} 
+	}
 
 }

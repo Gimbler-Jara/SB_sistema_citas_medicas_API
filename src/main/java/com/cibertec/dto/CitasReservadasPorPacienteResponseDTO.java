@@ -15,4 +15,5 @@ public class CitasReservadasPorPacienteResponseDTO {
     public String estado;
     public Date fecha;
     public int idHora;
+    public int tipo_cita;
 }

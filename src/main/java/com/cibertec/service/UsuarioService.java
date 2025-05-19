@@ -31,6 +31,15 @@ public class UsuarioService {
 		this.passwordEncoder = passwordEncoder;
 	}
 
+	public ResponseEntity<?> obtnerUsuarioPorId(Integer idUsuario) {
+		Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUsuario);
+		if (usuarioOpt.isPresent()) {
+			return ResponseEntity.status(HttpStatus.OK).body(usuarioOpt);
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Usuario no encontrado"));
+		}
+	}
+
 	public ResponseEntity<?> cambiarEstadoUsuario(Integer idUsuario) {
 		Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUsuario);
 
@@ -54,15 +63,14 @@ public class UsuarioService {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Usuario no encontrado"));
 		}
 	}
-	
-	
-	public Optional<Usuario> obtenerUsuarioPorEmail(String email){
+
+	public Optional<Usuario> obtenerUsuarioPorEmail(String email) {
 		Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
 		return usuario;
 	}
 
 	public ResponseEntity<?> buscarPorEmail(LoginDTO user) {
-		Optional<Usuario> usuarioOpt = obtenerUsuarioPorEmail( user.email);
+		Optional<Usuario> usuarioOpt = obtenerUsuarioPorEmail(user.email);
 
 		if (usuarioOpt.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Usuario no encontrado"));
@@ -77,7 +85,7 @@ public class UsuarioService {
 		if (!passwordEncoder.matches(user.password, usuario.getPasswordHash())) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Contraseña incorrecta"));
 		}
-		
+
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("rol", usuario.getRol().getRol());
 		claims.put("id", usuario.getId());
@@ -89,19 +97,19 @@ public class UsuarioService {
 		// Retornar datos + token
 		return ResponseEntity.ok(Map.of("usuario", usuario, "token", token));
 	}
-	
+
 	public ResponseEntity<?> refreshToken(String name) {
 		String email = name;
-	    Usuario usuario = obtenerUsuarioPorEmail(email)
-	        .orElseThrow(() -> new UsernameNotFoundException("No encontrado"));
+		Usuario usuario = obtenerUsuarioPorEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException("No encontrado"));
 
-	    Map<String, Object> claims = new HashMap<>();
-	    claims.put("rol", usuario.getRol().getRol());
-	    claims.put("id", usuario.getId());
-	    claims.put("nombre", usuario.getFirstName());
+		Map<String, Object> claims = new HashMap<>();
+		claims.put("rol", usuario.getRol().getRol());
+		claims.put("id", usuario.getId());
+		claims.put("nombre", usuario.getFirstName());
 
-	    String nuevoToken = jwtUtil.generarToken(usuario.getEmail(), claims);
-	    return ResponseEntity.ok(Map.of("token", nuevoToken));
+		String nuevoToken = jwtUtil.generarToken(usuario.getEmail(), claims);
+		return ResponseEntity.ok(Map.of("token", nuevoToken));
 	}
 
 }

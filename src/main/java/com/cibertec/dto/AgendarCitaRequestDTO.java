@@ -13,4 +13,5 @@ public class AgendarCitaRequestDTO {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate fecha;
     private int idHora;
+    private int tipoCita;
 }

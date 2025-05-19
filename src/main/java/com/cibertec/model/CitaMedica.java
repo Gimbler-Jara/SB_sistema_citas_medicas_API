@@ -36,5 +36,8 @@ public class CitaMedica {
     @ManyToOne
     @JoinColumn(name = "estado")
     private EstadoCita estado;
+    
+    @Column(name = "tipo_cita")
+    private Integer tipo_cita;
 }
 

@@ -2,6 +2,7 @@ package com.cibertec.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -27,9 +28,11 @@ public class CorsConfig {
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable).cors(withDefaults()).authorizeHttpRequests(auth -> auth
 				.requestMatchers(
-						"/api/usuarios/**",
-						"/api/cita-medica/historial/**"
-						).permitAll()
+						"/api/usuarios/**", 
+						"/api/document-types/**", 
+						"/api/cita-medica/historial/**")
+				.permitAll()
+				.requestMatchers(HttpMethod.POST, "/api/pacientes").permitAll()
 				.anyRequest().authenticated())
 		.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();

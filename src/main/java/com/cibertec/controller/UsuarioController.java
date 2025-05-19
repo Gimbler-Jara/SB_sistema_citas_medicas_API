@@ -19,6 +19,10 @@ public class UsuarioController {
 	@Autowired
 	private UsuarioService usuarioService;
 
+	@GetMapping("/{idUsuario}")
+	public ResponseEntity<?> obtenerUsuarioPorId(@PathVariable Integer idUsuario) {
+	    return usuarioService.obtnerUsuarioPorId(idUsuario);
+	}
 
 	@PostMapping("login")
 	public ResponseEntity<?> login(@RequestBody LoginDTO user) {

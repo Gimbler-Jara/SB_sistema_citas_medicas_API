@@ -89,9 +89,9 @@ public class CitaMedicaService {
 	}
 
 	// 4. Agendar cita
-	public ResponseEntity<Void> agendarCita(int idMedico, int idPaciente, LocalDate fecha, int idHora) {
+	public ResponseEntity<Void> agendarCita(int idMedico, int idPaciente, LocalDate fecha, int idHora, int tipoCita) {
 		try {
-			procedimientosRepository.agendarCita(idMedico, idPaciente, java.sql.Date.valueOf(fecha), idHora);
+			procedimientosRepository.agendarCita(idMedico, idPaciente, java.sql.Date.valueOf(fecha), idHora, tipoCita);
 			return ResponseEntity.status(HttpStatus.CREATED).build();
 		} catch (Exception e) {
 			System.out.println("Error al agendar cita: " + e.getMessage());

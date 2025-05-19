@@ -2,21 +2,15 @@ package com.cibertec.dto;
 
 import java.sql.Date;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class CitasAgendadasResponseDTO {
-	public int id;
-	public Date fecha;
-	public String hora;
-	public String estado;
-	public int pacienteID;
-	public String pacienteNombre;
-	public int medicoId;
-	public String medicoNombre;
-	public String especialidad;
+public interface CitasAgendadasResponseDTO {
+	Integer getId();
+	Date getFecha();
+	String getHora();
+	String getEstado();
+	Integer getPacienteID();
+	String getPacienteNombre();
+	Integer getMedicoId();
+	String getMedicoNombre();
+	String getEspecialidad();
+	Integer getTipo_cita();
 }

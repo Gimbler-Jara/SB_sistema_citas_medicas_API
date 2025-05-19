@@ -39,7 +39,7 @@ public class CitaMedicaController {
 	
 	@PostMapping("/agendar-cita")
 	public ResponseEntity<?> agendarCita(@RequestBody AgendarCitaRequestDTO req) {
-		return service.agendarCita(req.getIdMedico(), req.getIdPaciente(), req.getFecha(), req.getIdHora());
+		return service.agendarCita(req.getIdMedico(), req.getIdPaciente(), req.getFecha(), req.getIdHora(), req.getTipoCita());
 	}
 
 	

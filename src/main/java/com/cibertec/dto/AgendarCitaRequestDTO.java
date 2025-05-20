@@ -14,4 +14,5 @@ public class AgendarCitaRequestDTO {
     private LocalDate fecha;
     private int idHora;
     private int tipoCita;
+    private String nombreSala;
 }

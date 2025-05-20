@@ -7,10 +7,11 @@ public interface CitasAgendadasResponseDTO {
 	Date getFecha();
 	String getHora();
 	String getEstado();
-	Integer getPacienteID();
+	Integer getPacienteId();
 	String getPacienteNombre();
 	Integer getMedicoId();
 	String getMedicoNombre();
 	String getEspecialidad();
 	Integer getTipo_cita();
+	String getNombre_sala();
 }

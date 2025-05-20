@@ -1,6 +1,5 @@
 package com.cibertec.controller;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,28 +25,24 @@ public class CitaMedicaController {
 
 	@PostMapping("/registrar-disponibilidad")
 	public ResponseEntity<?> registrarDisponibilidadDeCita(@RequestBody RegistrarDisponibilidadDeCitaDTO req) {
-	    return service.registrarDisponibilidadDeCita(req.getIdMedico(), req.getIdDiaSemana(), req.getIdHora(),
-	            req.getIdEspecialidad());
+		return service.registrarDisponibilidadDeCita(req.getIdMedico(), req.getIdDiaSemana(), req.getIdHora(),req.getIdEspecialidad());
 	}
-
 
 	@PutMapping("/cambiar-estado-disponibilidad")
 	public ResponseEntity<?> cambiarEstadoDisponibilidad(@RequestBody CambiarEstadoDisponibilidadDeCitaDTO req) {
-		return service.cambiarEstadoDisponibilidad(req.getIdMedico(), req.getIdDiaSemana(), req.getIdHora(),
-				req.isActivo());
-	}
-	
-	@PostMapping("/agendar-cita")
-	public ResponseEntity<?> agendarCita(@RequestBody AgendarCitaRequestDTO req) {
-		return service.agendarCita(req.getIdMedico(), req.getIdPaciente(), req.getFecha(), req.getIdHora(), req.getTipoCita());
+		return service.cambiarEstadoDisponibilidad(req.getIdMedico(), req.getIdDiaSemana(), req.getIdHora(),req.isActivo());
 	}
 
-	
+	@PostMapping("/agendar-cita")
+	public ResponseEntity<?> agendarCita(@RequestBody AgendarCitaRequestDTO req) {
+		return service.agendarCita(req.getIdMedico(), req.getIdPaciente(), req.getFecha(), req.getIdHora(),req.getTipoCita(), req.getNombreSala());
+	}
+
 	@PostMapping("/cambiar-estado-cita-reservado-atendido/{idCita}")
-    public ResponseEntity<Void> atenderCita(@PathVariable("idCita") int idCita,@Valid @RequestBody DiagnosticoRequestDTO request) {
-        service.atenderCitaConRecetaCompleta(idCita, request.getDiagnostico(), request.getMedicamentos());
-        return ResponseEntity.ok().build();
-    }
+	public ResponseEntity<Void> atenderCita(@PathVariable("idCita") int idCita,@Valid @RequestBody DiagnosticoRequestDTO request) {
+		service.atenderCitaConRecetaCompleta(idCita, request.getDiagnostico(), request.getMedicamentos());
+		return ResponseEntity.ok().build();
+	}
 
 	@DeleteMapping("/eliminar-cita/{idCita}")
 	public ResponseEntity<?> eliminarCita(@PathVariable("idCita") int idCita) {
@@ -59,18 +54,17 @@ public class CitaMedicaController {
 		return service.listarCitasResgistradasPorPaciente(idPaciente);
 	}
 
-	
 	@GetMapping("/historial/{idCita}")
 	public ResponseEntity<HistorialCitaDTO> obtenerHistorial(@PathVariable("idCita") int idCita) {
-	    HistorialCitaDTO dto = service.obtenerHistorialPorCita(idCita);
-	    return ResponseEntity.ok(dto);
-	}
-	
-	@GetMapping("/historial-paciente/{idPaciente}")
-	public ResponseEntity<List<HistorialCitaDTO>> obtenerHistorialPorPaciente(@PathVariable("idPaciente") int idPaciente) {
-		List<HistorialCitaDTO> dto = service.obtenerHistorialPorPaciente(idPaciente);
-	    return ResponseEntity.ok(dto);
+		HistorialCitaDTO dto = service.obtenerHistorialPorCita(idCita);
+		return ResponseEntity.ok(dto);
 	}
 
+	@GetMapping("/historial-paciente/{idPaciente}")
+	public ResponseEntity<List<HistorialCitaDTO>> obtenerHistorialPorPaciente(
+			@PathVariable("idPaciente") int idPaciente) {
+		List<HistorialCitaDTO> dto = service.obtenerHistorialPorPaciente(idPaciente);
+		return ResponseEntity.ok(dto);
+	}
 
 }

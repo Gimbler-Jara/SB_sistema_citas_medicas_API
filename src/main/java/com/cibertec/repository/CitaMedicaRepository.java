@@ -41,9 +41,9 @@ public interface CitaMedicaRepository extends JpaRepository<CitaMedica, Integer>
 	// 4. Agendar cita---------------------
 	@Modifying
 	@Transactional
-	@Query(value = "CALL sp_agendar_cita(:idMedico, :idPaciente, :fecha, :idHora, :tipoCita)", nativeQuery = true)
+	@Query(value = "CALL sp_agendar_cita(:idMedico, :idPaciente, :fecha, :idHora, :tipoCita, :nombreSala)", nativeQuery = true)
 	void agendarCita(@Param("idMedico") int idMedico, @Param("idPaciente") int idPaciente, @Param("fecha") Date fecha,
-			@Param("idHora") int idHora, @Param("tipoCita") int tipoCita);
+			@Param("idHora") int idHora, @Param("tipoCita") int tipoCita, @Param("nombreSala") String nombreSala);
 
 	
 	@Modifying

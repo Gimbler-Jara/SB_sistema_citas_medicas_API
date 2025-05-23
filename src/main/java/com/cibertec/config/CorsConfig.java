@@ -62,3 +62,11 @@ public class CorsConfig {
 "/api/especialidades/**", 
 "/api/diasSemana/**"
 */
+
+/*
+"/api/usuarios/**", 
+"/api/document-types/**", 
+"/api/cita-medica/historial/**")
+*/
+
+

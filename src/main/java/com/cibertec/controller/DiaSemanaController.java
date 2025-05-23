@@ -1,12 +1,12 @@
 package com.cibertec.controller;
 
-import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.cibertec.model.DiaSemana;
 import com.cibertec.service.DiaSemanaService;
 
 @RestController
@@ -17,7 +17,12 @@ public class DiaSemanaController {
 	private DiaSemanaService diaSemanaService;
 
 	@GetMapping
-	public ResponseEntity<List<DiaSemana>> ListarDiasSemana() {
-		return diaSemanaService.ListarDiasSemana();
+	public ResponseEntity<Map<String, Object>> ListarDiasSemana() {
+		try {
+			return diaSemanaService.ListarDiasSemana();
+		} catch (Exception e) {
+			System.out.println("Error encontrado: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 }

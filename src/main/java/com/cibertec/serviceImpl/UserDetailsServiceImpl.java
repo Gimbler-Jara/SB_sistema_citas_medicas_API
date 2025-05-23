@@ -1,4 +1,4 @@
-package com.cibertec.service;
+package com.cibertec.serviceImpl;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import com.cibertec.model.Usuario;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private UsuarioService usuarioService;
+    private UsuarioServiceImpl usuarioService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

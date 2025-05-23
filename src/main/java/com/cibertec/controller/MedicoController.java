@@ -2,26 +2,15 @@ package com.cibertec.controller;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cibertec.dto.MedicoActualizacionDTO;
 import com.cibertec.dto.RegistroMedicoDTO;
-import com.cibertec.model.Medico;
 import com.cibertec.service.MedicoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,72 +26,119 @@ public class MedicoController {
 	private ObjectMapper objectMapper;
 
 	@GetMapping
-	public ResponseEntity<List<Medico>> listarMedicos() {
-		return medicoService.listarMedicos();
+	public ResponseEntity<Map<String, Object>> listarMedicos() {
+		try {
+			return medicoService.listarMedicos();
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Map.of("mensaje", "Error al listar médicos", "httpStatus", 500));
+		}
 	}
 
 	@GetMapping("/{idMedico}")
-	public ResponseEntity<Optional<Medico>> obtenerMedico(@PathVariable int idMedico) {
-		return medicoService.obtenerMedicoPorId(idMedico);
+	public ResponseEntity<Map<String, Object>> obtenerMedico(@PathVariable int idMedico) {
+		try {
+			return medicoService.obtenerMedicoPorId(idMedico);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Map.of("mensaje", "Error al obtener el médico", "httpStatus", 500));
+		}
 	}
 
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<?> registrarMedico(@RequestPart("datos") String datosJson,
+	public ResponseEntity<Map<String, Object>> registrarMedico(@RequestPart("datos") String datosJson,
 			@RequestPart("archivoFirmaDigital") MultipartFile archivoFirmaDigital) {
 
 		try {
 			RegistroMedicoDTO dto = objectMapper.readValue(datosJson, RegistroMedicoDTO.class);
-			Medico medico = medicoService.registrarMedico(dto, archivoFirmaDigital);
-			return ResponseEntity.ok(medico);
+			return ResponseEntity.ok(Map.of("mensaje", "Médico registrado correctamente", "httpStatus", 200, "datos",medicoService.registrarMedico(dto, archivoFirmaDigital)));
 		} catch (JsonProcessingException e) {
-			return ResponseEntity.badRequest().body(Map.of("success", false, "message", "JSON inválido en 'datos'"));
+			return ResponseEntity.badRequest().body(Map.of("mensaje", "JSON inválido en 'datos'", "httpStatus", 400));
 		} catch (IOException e) {
 			return ResponseEntity.internalServerError()
-					.body(Map.of("success", false, "message", "Error al registrar médico"));
+					.body(Map.of("mensaje", "Error al registrar médico", "httpStatus", 500));
+		} catch (Exception e) {
+			return ResponseEntity.internalServerError().body(Map.of("mensaje", "Error inesperado", "httpStatus", 500));
 		}
 	}
 
-	@GetMapping("/obtnerFirma")
-	public ResponseEntity<?> obtenerUrlFirmaDigital(@RequestParam String path) {
-		return medicoService.obtenerUrlFirmaDigital(path);
-	}
-
 	@PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<?> actualizarMedico(@PathVariable Integer id, @RequestPart("datos") String datosJson,
-			@RequestPart(value = "archivoFirmaDigital", required = false) MultipartFile archivoFirmaDigital)
-			throws IOException {
+	public ResponseEntity<Map<String, Object>> actualizarMedico(@PathVariable Integer id,
+			@RequestPart("datos") String datosJson,
+			@RequestPart(value = "archivoFirmaDigital", required = false) MultipartFile archivoFirmaDigital) {
 
 		try {
 			MedicoActualizacionDTO dto = objectMapper.readValue(datosJson, MedicoActualizacionDTO.class);
 			return medicoService.actualizarMedico(id, dto, archivoFirmaDigital);
 		} catch (JsonProcessingException e) {
-			return ResponseEntity.badRequest().body(Map.of("success", false, "message", "JSON inválido en 'datos'"));
+			return ResponseEntity.badRequest().body(Map.of("mensaje", "JSON inválido en 'datos'", "httpStatus", 400));
+		} catch (IOException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Map.of("mensaje", "Error al actualizar médico", "httpStatus", 500));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Map.of("mensaje", "Error inesperado", "httpStatus", 500));
+		}
+	}
+
+	@GetMapping("/obtnerFirma")
+	public ResponseEntity<Map<String, Object>> obtenerUrlFirmaDigital(@RequestParam String path) {
+		try {
+			return medicoService.obtenerUrlFirmaDigital(path);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Map.of("mensaje", "Error al obtener firma digital", "httpStatus", 500));
 		}
 	}
 
 	@GetMapping("/especialidad_por_id_medico/{idMedico}")
-	public ResponseEntity<?> obtenerEspecialidadPorIdMedico(@PathVariable("idMedico") int idMedico) {
-		return medicoService.obtenerEspecialidadPorIdMedico(idMedico);
-	}
-
-	@GetMapping("/horario-trabajo-medico/{idMedico}")
-	public ResponseEntity<?> listarHorariosDeTrabajoMedico(@PathVariable Integer idMedico) {
-		return medicoService.listarHorariosDeTrabajoMedico(idMedico);
+	public ResponseEntity<Map<String, Object>> obtenerEspecialidadPorIdMedico(@PathVariable int idMedico) {
+		try {
+			return medicoService.obtenerEspecialidadPorIdMedico(idMedico);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Map.of("mensaje", "Error al obtener especialidad", "httpStatus", 500));
+		}
 	}
 
 	@GetMapping("/medicos-por-especialidad/{idEspecialidad}")
-	public ResponseEntity<?> listarMedicosPorEspecialidad(@PathVariable("idEspecialidad") int idEspecialidad) {
-		return medicoService.listarMedicosPorEspecialidad(idEspecialidad);
+	public ResponseEntity<Map<String, Object>> listarMedicosPorEspecialidad(@PathVariable int idEspecialidad) {
+		try {
+			return medicoService.listarMedicosPorEspecialidad(idEspecialidad);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Map.of("mensaje", "Error al listar médicos por especialidad", "httpStatus", 500));
+		}
 	}
 
 	@GetMapping("/dias-disponibles/{idMedico}")
-	public ResponseEntity<?> listarDiasDisponibles(@PathVariable("idMedico") int idMedico) {
-		return medicoService.listarDiasDisponiblesPorMedico(idMedico);
+	public ResponseEntity<Map<String, Object>> listarDiasDisponibles(@PathVariable int idMedico) {
+		try {
+			return medicoService.listarDiasDisponiblesPorMedico(idMedico);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Map.of("mensaje", "Error al listar días disponibles", "httpStatus", 500));
+		}
 	}
 
 	@GetMapping("/horas-disponibles")
-	public ResponseEntity<?> listarHorasDisponibles(@RequestParam int idMedico, @RequestParam String fecha) {
-		return medicoService.listarHorasDisponibles(idMedico, LocalDate.parse(fecha));
+	public ResponseEntity<Map<String, Object>> listarHorasDisponibles(@RequestParam int idMedico,
+			@RequestParam String fecha) {
+		try {
+			return medicoService.listarHorasDisponibles(idMedico, LocalDate.parse(fecha));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Map.of("mensaje", "Error al listar horas disponibles", "httpStatus", 500));
+		}
 	}
 
+	@GetMapping("/horario-trabajo-medico/{idMedico}")
+	public ResponseEntity<Map<String, Object>> listarHorariosDeTrabajoMedico(@PathVariable Integer idMedico) {
+		try {
+			return medicoService.listarHorariosDeTrabajoMedico(idMedico);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Map.of("mensaje", "Error al listar horarios de trabajo", "httpStatus", 500));
+		}
+	}
 }

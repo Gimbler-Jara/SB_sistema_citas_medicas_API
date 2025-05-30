@@ -30,6 +30,7 @@ public class CorsConfig {
 				.requestMatchers(
 						"/api/usuarios/**", 
 						"/api/document-types/**", 
+						"/api/medicos/**", 
 						"/api/cita-medica/historial/**")
 				.permitAll()
 				.requestMatchers(HttpMethod.POST, "/api/pacientes").permitAll()

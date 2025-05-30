@@ -1,6 +1,7 @@
 package com.cibertec.serviceImpl;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -191,6 +192,7 @@ public class CitaMedicaServiceImpl implements CitaMedicaService {
             response.put("httpStatus", HttpStatus.NOT_FOUND.value());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
+                
         response.put("mensaje", "Historial encontrado");
         response.put("httpStatus", HttpStatus.OK.value());
         response.put("datos", resultado);
@@ -204,8 +206,10 @@ public class CitaMedicaServiceImpl implements CitaMedicaService {
         if (resultado == null || resultado.isEmpty()) {
             response.put("mensaje", "No se encontró historial para el paciente con ID: " + idPaciente);
             response.put("httpStatus", HttpStatus.NO_CONTENT.value());
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+            response.put("datos",  new ArrayList<>());
+            return ResponseEntity.ok(response);
         }
+        
         response.put("mensaje", "Historial del paciente encontrado");
         response.put("httpStatus", HttpStatus.OK.value());
         response.put("datos", resultado);

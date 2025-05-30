@@ -57,6 +57,8 @@ public class PacienteServiceImpl implements PacienteService {
 	@Override
 	public ResponseEntity<Map<String, Object>> registrarPaciente(RegistroPacienteDTO dto) {
 	    Map<String, Object> response = new HashMap<>();
+	    
+	    System.out.println("dtao paciente " + dto.toString());
 
 	    if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
 	        response.put("mensaje", "El correo electrónico ya está registrado.");

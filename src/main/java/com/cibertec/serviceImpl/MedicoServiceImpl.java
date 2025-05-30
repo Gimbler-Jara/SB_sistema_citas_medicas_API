@@ -79,6 +79,10 @@ public class MedicoServiceImpl implements MedicoService {
 
 	@Override
 	public Medico registrarMedico(RegistroMedicoDTO dto, MultipartFile archivoFirmaDigital) throws IOException {
+		
+		System.out.println("dtao medico" + dto.toString());
+		System.out.println("Archivo " + archivoFirmaDigital);
+		
 		if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El correo electrónico ya está registrado.");
 		}
@@ -116,6 +120,7 @@ public class MedicoServiceImpl implements MedicoService {
 			FirebaseStorageService.FirebaseUploadResult firma = firebaseStorageService.uploadFile(archivoFirmaDigital,
 					usuarioGuardado.getId());
 			medico.setUrlFirmaDigital(firma.path());
+			System.out.println(firma.path());
 		}
 
 		return medicoRepository.save(medico);

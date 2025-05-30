@@ -1,7 +1,7 @@
 package com.cibertec.config;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.FileInputStream;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
@@ -12,22 +12,50 @@ import com.google.firebase.FirebaseOptions;
 
 import jakarta.annotation.PostConstruct;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
 @Component
 public class FirebaseInitializer {
 
-    @PostConstruct
-    public void init() throws IOException {
-        FileInputStream serviceAccount = new FileInputStream(
-                new ClassPathResource("firebase-adminsdk.json").getFile()
-        );
+	private final String json = "{\r\n" + "  \"type\": \"service_account\",\r\n"
+			+ "  \"project_id\": \"digital-world-8d4cc\",\r\n"
+			+ "  \"private_key_id\": \"8e9b80615c5fb99b7e7fd8b311b7186df81c05e2\",\r\n"
+			+ "  \"private_key\": \"-----BEGIN PRIVATE KEY-----\\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDgHuQRw/L0SiKV\\ntfyVl9ju9wXL3j3mBGrHtYwJCuRnGpzG5a5TR+NX4sDFuVRK+V5K7uAyYA7S45dj\\nYlyDQIT3EY0ld49ojlIRyhkXLbPa7zAAnU2w0+NVKIaGi+LTePbnKl5ITbjEcUV/\\n+VqixvEE75CYpQelXmAEXDWQYNqLKfp/VlhYrRbcH6TsM/yd/5FeSPntaojPVDdb\\nLG2bVl3zbygjsDhG/5rSiagdt5LWnZfH+nqmh7C5KclNgITsDF6gVQKIGN1ZU+f+\\nxx8Jp/g11znpaXNB/XzLFd/zrxgisaKJrR63By7Wh0Yeog6WXn/G4LHovKTYowjQ\\n16QVJ+1fAgMBAAECggEAE3Y7QdutLk99v1hlTaw4909WHoT3BRFfIGaAeYyLlvR1\\npsPtJmg4sroLGWBllHkhGgqyR02WG/QNgmDZPcCNi1Ln2dgPCPpK4CaXlS6vzpQ0\\nq+j9BRzxQcTaIbbmBI0di6dfNpIhOFXJvjouB7KU3WPcP5UdG9wdJGPJdvciIzFh\\nZ6WSeWJDoiRmKPmPeVQEfFZnWuL5RZekyQ99TSRUQAxFWBdDH08rwbFy747te0uG\\nLBs6/ZAGt17fJ63AnGGkzl3hRONy3e+iK4k/8lDBAuGR961rj9xADl3txepXAj3d\\nBpjp8LlYteSFytkL5Uhzj0H8nIEu9Z+Vj26QH7jDCQKBgQDyp54jpFQAdRj/vfp0\\nlRwvqCIvX5T/PFJPazeLKO4re+E0TcQlMXBPaa1olEMaHeFRmaSOFF8BQZgCfFRn\\nwgfVh2vueCzUR+MVN+ORNtF377sjr9lJWIT2B7G3GZKpXn1QcdaIba7WVe6NgJkF\\nFgrouwCCJrULQh5bmCIESa7BHQKBgQDsclQFyfOmPaPNphKlR2SVBYHOaNfTDS+X\\nkMJxJolsEtvBhyySLmwdWlJNE5rXLTJsnQV9ViaDgCKCX2nocAuW6B4hTDZb3XZl\\ngTxf00GXdOlDMnA2/VEf8tlsvSMA7554INZtjERxjBoP9U9nDT5db5RCuAH0xx7q\\niHWWg/R7qwKBgQDS4hFxcFMAwsOjHvwXba89S6XJ/guDdm0iUE/JRR0X9WVXC263\\n1CuDGJh4FsHqZKV5QUndoJ6gfN0a6+p+8gXU8QhAC3kKVB9qRVQk07tfvJyq+xyf\\nvapwF2e/dR4cy92kmAqWLpyP8caMe4KBBRMeB8b9VZ5p1mCDwcduaorRkQKBgGs3\\ntK4jU57wmJSqWA4mf4+rvZ7xn9yOQCSEegeBKBOfwZLSTv3Cmzf8OxHEcBRe5Fyo\\nH1Mke7ZppjxkM8w48qhtfSwwOP4TQJrqrYvuafHaC+RyvLvSxrSsFLfgVD0aa0uh\\n6Foonui2VSMjY+wg70TDUgGnGwv6NyS22Et2bqidAoGACveDCPFlw1h2UhjPmj8n\\nBG+9azVfqii+2+IaybRBbOBlE0fNpOcJjlIvpdBgIXTvg5R5GLzb0mSYoCkgywH5\\nygwiUszaqaKZz00GqVKq2EmMeyAv7nFyl/fWxJk7P0mO/2XCrDRvNx5vVfb15L+u\\nnXG0iI+6QXQXG1A3Jv0QSWU=\\n-----END PRIVATE KEY-----\\n\",\r\n"
+			+ "  \"client_email\": \"firebase-adminsdk-tbqlj@digital-world-8d4cc.iam.gserviceaccount.com\",\r\n"
+			+ "  \"client_id\": \"117588190160810571624\",\r\n"
+			+ "  \"auth_uri\": \"https://accounts.google.com/o/oauth2/auth\",\r\n"
+			+ "  \"token_uri\": \"https://oauth2.googleapis.com/token\",\r\n"
+			+ "  \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\",\r\n"
+			+ "  \"client_x509_cert_url\": \"https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-tbqlj%40digital-world-8d4cc.iam.gserviceaccount.com\",\r\n"
+			+ "  \"universe_domain\": \"googleapis.com\"\r\n" + "}";
 
-        FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                .setStorageBucket("digital-world-8d4cc.appspot.com")
-                .build();
+	@PostConstruct
+	public void init() throws IOException {
+		/*
+		 * FileInputStream serviceAccount = new FileInputStream( new
+		 * ClassPathResource("firebase-adminsdk.json").getFile() );
+		 * 
+		 * FirebaseOptions options = FirebaseOptions.builder()
+		 * .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+		 * .setStorageBucket("digital-world-8d4cc.appspot.com") .build();
+		 * 
+		 * if (FirebaseApp.getApps().isEmpty()) { FirebaseApp.initializeApp(options); }
+		 */
+		try {
+			InputStream serviceAccount = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
 
-        if (FirebaseApp.getApps().isEmpty()) {
-            FirebaseApp.initializeApp(options);
-        }
-    }
+			FirebaseOptions options = FirebaseOptions.builder()
+					.setCredentials(GoogleCredentials.fromStream(serviceAccount))
+					.setStorageBucket("digital-world-8d4cc.appspot.com").build();
+
+			if (FirebaseApp.getApps().isEmpty()) {
+				FirebaseApp.initializeApp(options);
+				System.out.println("✅ Firebase inicializado con credenciales embebidas.");
+			}
+		} catch (Exception e) {
+			throw new RuntimeException("❌ Error al inicializar Firebase con JSON embebido", e);
+		}
+	}
 }

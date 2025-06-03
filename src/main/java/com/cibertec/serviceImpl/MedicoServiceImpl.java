@@ -65,7 +65,7 @@ public class MedicoServiceImpl implements MedicoService {
 		Map<String, Object> response = new HashMap<>();
 		Optional<Medico> medicoOpt = medicoRepository.findById(idUsuario);
 
-		if (medicoOpt.isEmpty()) {
+		if (medicoOpt.isEmpty()) { 
 			response.put("mensaje", "Médico no encontrado");
 			response.put("httpStatus", HttpStatus.NOT_FOUND.value());
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);

@@ -13,7 +13,7 @@ import java.util.*;
 @Service
 public class JwtUtil {
 
-	private static final String SECRET_KEY = "clave-jwt-supersecreta-para-mi-proyecto-ecommerce-2025!!";
+	private static final String SECRET_KEY = "JS8hrlerMFhs5kACvlwqueXYc8QlptCX";
 
     public String generarToken(String subject) {
         return generarToken(subject, new HashMap<>());
@@ -24,7 +24,7 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 2))  
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))  
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

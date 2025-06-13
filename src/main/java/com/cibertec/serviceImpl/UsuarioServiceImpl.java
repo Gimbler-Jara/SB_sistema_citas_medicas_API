@@ -5,7 +5,6 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +13,8 @@ import com.cibertec.model.Usuario;
 import com.cibertec.repository.UsuarioRepository;
 import com.cibertec.security.JwtUtil;
 import com.cibertec.service.UsuarioService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -81,7 +82,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> buscarPorEmail(LoginDTO user) {
+	public ResponseEntity<Map<String, Object>> login(LoginDTO user) {
 		Map<String, Object> response = new HashMap<>();
 		Optional<Usuario> usuarioOpt = obtenerUsuarioPorEmail(user.email);
 
@@ -107,8 +108,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("rol", usuario.getRol().getRol());
-		claims.put("id", usuario.getId());
-		claims.put("nombre", usuario.getFirstName());
+		/*claims.put("id", usuario.getId());
+		claims.put("nombre", usuario.getFirstName())*/
 
 		String token = jwtUtil.generarToken(usuario.getEmail(), claims);
 
@@ -120,26 +121,6 @@ public class UsuarioServiceImpl implements UsuarioService {
 		return ResponseEntity.ok(response);
 	}
 
-	@Override
-	public ResponseEntity<Map<String, Object>> refreshToken(String email) {
-		Map<String, Object> response = new HashMap<>();
-
-		Usuario usuario = obtenerUsuarioPorEmail(email)
-				.orElseThrow(() -> new UsernameNotFoundException("No encontrado"));
-
-		Map<String, Object> claims = new HashMap<>();
-		claims.put("rol", usuario.getRol().getRol());
-		claims.put("id", usuario.getId());
-		claims.put("nombre", usuario.getFirstName());
-
-		String nuevoToken = jwtUtil.generarToken(usuario.getEmail(), claims);
-
-		response.put("mensaje", "Token renovado");
-		response.put("httpStatus", HttpStatus.OK.value());
-		response.put("token", nuevoToken);
-
-		return ResponseEntity.ok(response);
-	}
 
 	@Override
 	public ResponseEntity<Map<String, Object>> obtenerMiPerfil(Authentication authentication) {
@@ -163,4 +144,19 @@ public class UsuarioServiceImpl implements UsuarioService {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 		}
 	}
+
+	@Override
+	public ResponseEntity<Map<String, Object>> obtenerDatosPorToken(HttpServletRequest request) {
+		String token = jwtUtil.obtenerTokenDeHeader(request);
+	    String email = jwtUtil.obtenerEmailDesdeToken(token);
+	    Optional<Usuario> usuario = obtenerUsuarioPorEmail(email); 
+	    Map<String, Object> response = new HashMap<>();
+	    String mensaje ="Datos del usuario";
+		response.put("mensaje", mensaje);
+		response.put("httpStatus", HttpStatus.OK.value());
+	    response.put("usuario", usuario);
+	    return ResponseEntity.ok(response);
+	}
+	
+	
 }

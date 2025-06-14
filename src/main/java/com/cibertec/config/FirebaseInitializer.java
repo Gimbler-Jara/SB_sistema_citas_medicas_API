@@ -1,9 +1,7 @@
 package com.cibertec.config;
 
 import java.io.IOException;
-import java.io.FileInputStream;
 
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import com.google.auth.oauth2.GoogleCredentials;

@@ -38,7 +38,7 @@ public class MedicoController {
 	@GetMapping("/{idMedico}")
 	public ResponseEntity<Map<String, Object>> obtenerMedico(@PathVariable int idMedico) {
 		try {
-			return medicoService.obtenerMedicoPorId(idMedico);
+			return medicoService.obtenerMedicoPorId(idMedico); 
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(Map.of("mensaje", "Error al obtener el médico", "httpStatus", 500));
@@ -60,7 +60,7 @@ public class MedicoController {
 		} catch (Exception e) {
 			return ResponseEntity.internalServerError().body(Map.of("mensaje", "Error inesperado", "httpStatus", 500));
 		}
-	}
+	} 
 
 	@PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Map<String, Object>> actualizarMedico(@PathVariable Integer id,

@@ -17,25 +17,29 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Configuration 
+@Configuration
 @EnableWebSecurity
 public class CorsConfig {
-	
+
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
 
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.csrf(AbstractHttpConfigurer::disable).cors(withDefaults()).authorizeHttpRequests(auth -> auth
-				.requestMatchers(
-						"/api/usuarios/**", 
-						"/api/document-types/**", 
-						"/api/medicos/**", 
-						"/api/cita-medica/historial/**")
-				.permitAll()
-				.requestMatchers(HttpMethod.POST, "/api/pacientes").permitAll()
-				.anyRequest().authenticated())
-		.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+		http.csrf(AbstractHttpConfigurer::disable)
+		        .cors(withDefaults())
+				.authorizeHttpRequests(auth -> auth
+						
+						// Rutas públicas específicas
+						.requestMatchers("/api/document-types/**").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/pacientes").permitAll()
+						.requestMatchers(HttpMethod.GET, "/api/medicos/*").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/usuarios/login").permitAll()
+						.requestMatchers(HttpMethod.GET, "/api/cita-medica/historial/*").permitAll()
+						
+						// Todo lo demás protegido
+						.anyRequest().authenticated())
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
 
@@ -45,9 +49,11 @@ public class CorsConfig {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
-						.allowedOrigins("http://localhost:4200", "https://xzqnmbqb-4200.brs.devtunnels.ms", "https://medicoscontigo.netlify.app")
-						.allowedMethods("*")
-						.allowedHeaders("*")
+						.allowedOrigins("http://localhost:4200", 
+								        "https://xzqnmbqb-4200.brs.devtunnels.ms",
+								        "https://medicoscontigo.netlify.app")
+						.allowedMethods("*").
+						allowedHeaders("*")
 						.allowCredentials(true);
 			}
 		};
@@ -56,19 +62,12 @@ public class CorsConfig {
 
 //esto es un comentario adicional
 /*
-"/api/usuarios/**", 
-"/api/medicos/**", 
-"/api/cita-medica/**",
-"/api/pacientes/**", 
-"/api/document-types/**", 
-"/api/especialidades/**", 
-"/api/diasSemana/**"
-*/
+ * "/api/usuarios/**", "/api/medicos/**", "/api/cita-medica/**",
+ * "/api/pacientes/**", "/api/document-types/**", "/api/especialidades/**",
+ * "/api/diasSemana/**"
+ */
 
 /*
-"/api/usuarios/**", 
-"/api/document-types/**", 
-"/api/cita-medica/historial/**")
-*/
-
-
+ * "/api/usuarios/**", "/api/document-types/**",
+ * "/api/cita-medica/historial/**")
+ */

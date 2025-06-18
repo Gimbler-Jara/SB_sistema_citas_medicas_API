@@ -80,9 +80,6 @@ public class MedicoServiceImpl implements MedicoService {
 	@Override
 	public Medico registrarMedico(RegistroMedicoDTO dto, MultipartFile archivoFirmaDigital) throws IOException {
 		
-		System.out.println("dtao medico" + dto.toString());
-		System.out.println("Archivo " + archivoFirmaDigital);
-		
 		if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El correo electrónico ya está registrado.");
 		}

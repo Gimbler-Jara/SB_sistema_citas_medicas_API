@@ -108,8 +108,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("rol", usuario.getRol().getRol());
-		/*claims.put("id", usuario.getId());
-		claims.put("nombre", usuario.getFirstName())*/
+		claims.put("id", usuario.getId());
+		//claims.put("nombre", usuario.getFirstName())
 
 		String token = jwtUtil.generarToken(usuario.getEmail(), claims);
 

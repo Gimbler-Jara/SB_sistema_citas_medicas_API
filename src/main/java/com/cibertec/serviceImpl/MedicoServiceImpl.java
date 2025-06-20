@@ -208,6 +208,7 @@ public class MedicoServiceImpl implements MedicoService {
 		if (especialidad == null) {
 			response.put("mensaje", "Especialidad no encontrada para este médico");
 			response.put("httpStatus", HttpStatus.NO_CONTENT.value());
+			response.put("especialidad", List.of());
 			return ResponseEntity.status(HttpStatus.OK).body(response);
 		}
 
@@ -221,17 +222,26 @@ public class MedicoServiceImpl implements MedicoService {
 	public ResponseEntity<Map<String, Object>> listarMedicosPorEspecialidad(int idEspecialidad) {
 		Map<String, Object> response = new HashMap<>();
 		List<MedicosPorEspecialidadDTO> medicos = medicoRepository.listarMedicosPorEspecialidad(idEspecialidad);
+		
+		List<MedicosPorEspecialidadDTO> medicosConDisponibilidad = new ArrayList<>();
+
+	    for (MedicosPorEspecialidadDTO medico : medicos) {
+	        List<DiasDisponiblesPorMedicoDTO> dias = medicoRepository.listarDiasDisponiblesPorMedico(medico.getId());
+	        if (!dias.isEmpty()) {
+	            medicosConDisponibilidad.add(medico);
+	        }
+	    }
 
 		if (medicos.isEmpty()) {
 			response.put("mensaje", "No hay médicos para esta especialidad");
 			response.put("httpStatus", HttpStatus.NO_CONTENT.value());
-			response.put("medicos", medicos);
+			response.put("medicos", List.of());
 			return ResponseEntity.status(HttpStatus.OK).body(response);
 		}
 
 		response.put("mensaje", "Lista de médicos por especialidad");
 		response.put("httpStatus", HttpStatus.OK.value());
-		response.put("medicos", medicos);
+		response.put("medicos", medicosConDisponibilidad);
 		return ResponseEntity.ok(response);
 	}
 
@@ -243,7 +253,7 @@ public class MedicoServiceImpl implements MedicoService {
 		if (dias.isEmpty()) {
 			response.put("mensaje", "No hay días disponibles");
 			response.put("httpStatus", HttpStatus.NO_CONTENT.value());
-			response.put("diasSemana", dias);
+			response.put("diasSemana", List.of());
 			return ResponseEntity.status(HttpStatus.OK).body(response);
 		}
 
@@ -262,7 +272,7 @@ public class MedicoServiceImpl implements MedicoService {
 		if (horas.isEmpty()) {
 			response.put("mensaje", "No hay horas disponibles para esta fecha");
 			response.put("httpStatus", HttpStatus.NO_CONTENT.value());
-			response.put("horas", horas);
+			response.put("horas", List.of());
 			return ResponseEntity.status(HttpStatus.OK).body(response);
 		}
 
@@ -280,7 +290,7 @@ public class MedicoServiceImpl implements MedicoService {
 		if (lista.isEmpty()) {
 			response.put("mensaje", "No cuenta con regitro en el horario");
 			response.put("httpStatus", HttpStatus.NO_CONTENT.value());
-			response.put("datos", lista);
+			response.put("datos", List.of());
 			return ResponseEntity.status(HttpStatus.OK).body(response);
 		} else {
 			response.put("mensaje", "Horarios de trabajo encontrados");

@@ -35,7 +35,7 @@ public class CitaMedicaServiceImpl implements CitaMedicaService {
         if (citas.isEmpty()) {
             response.put("mensaje", "No hay citas agendadas");
             response.put("httpStatus", HttpStatus.NO_CONTENT.value());
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         }
         response.put("mensaje", "Citas agendadas encontradas");
         response.put("httpStatus", HttpStatus.OK.value());
@@ -159,7 +159,7 @@ public class CitaMedicaServiceImpl implements CitaMedicaService {
             procedimientosRepository.eliminarCitaReservado(idCita);
             response.put("mensaje", "Cita eliminada correctamente");
             response.put("httpStatus", HttpStatus.NO_CONTENT.value());
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
             response.put("mensaje", "Error al eliminar cita");
             response.put("httpStatus", HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -175,7 +175,8 @@ public class CitaMedicaServiceImpl implements CitaMedicaService {
         if (citas.isEmpty()) {
             response.put("mensaje", "No hay citas registradas para este paciente");
             response.put("httpStatus", HttpStatus.NO_CONTENT.value());
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+            response.put("citas", citas);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         }
         response.put("mensaje", "Citas reservadas encontradas");
         response.put("httpStatus", HttpStatus.OK.value());
@@ -190,6 +191,7 @@ public class CitaMedicaServiceImpl implements CitaMedicaService {
         if (resultado == null) {
             response.put("mensaje", "No se encontró historial para la cita con ID: " + idCita);
             response.put("httpStatus", HttpStatus.NOT_FOUND.value());
+            response.put("datos", resultado);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
                 

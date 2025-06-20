@@ -27,8 +27,8 @@ public class DiaSemanaServiceImpl implements DiaSemanaService {
 		if (diasSemana.isEmpty()) {
 			response.put("mensaje", "No existen registros para la consulta");
 			response.put("httpstatus", HttpStatus.NOT_FOUND.value());
-
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+			response.put("diasSemana", diasSemana);
+			return ResponseEntity.status(HttpStatus.OK).body(response);
 		} else {
 			response.put("mensaje", "Lista de dias de semana");
 			response.put("httpstatus", HttpStatus.OK.value());

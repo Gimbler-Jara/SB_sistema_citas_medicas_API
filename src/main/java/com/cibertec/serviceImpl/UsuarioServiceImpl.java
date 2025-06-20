@@ -141,6 +141,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 		} else {
 			response.put("mensaje", "Usuario no encontrado");
 			response.put("httpStatus", HttpStatus.NOT_FOUND.value());
+			response.put("usuario", usuario.get());
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 		}
 	}

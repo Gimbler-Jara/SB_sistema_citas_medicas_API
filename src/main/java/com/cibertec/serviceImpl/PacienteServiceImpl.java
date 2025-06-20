@@ -45,7 +45,8 @@ public class PacienteServiceImpl implements PacienteService {
 		if (pacientes.isEmpty()) {
 			response.put("mensaje", "No hay pacientes registrados");
 			response.put("httpStatus", HttpStatus.NO_CONTENT.value());
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+			response.put("pacientes", pacientes);
+			return ResponseEntity.status(HttpStatus.OK).body(response);
 		}
 
 		response.put("mensaje", "Lista de pacientes");
@@ -109,7 +110,7 @@ public class PacienteServiceImpl implements PacienteService {
 			response.put("mensaje", "Paciente no encontrado");
 			response.put("httpStatus", HttpStatus.NOT_FOUND.value());
 			response.put("success", false);
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+			return ResponseEntity.status(HttpStatus.OK).body(response);
 		}
 
 		Paciente paciente = pacienteOpt.get();

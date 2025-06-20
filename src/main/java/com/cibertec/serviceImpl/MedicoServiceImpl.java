@@ -51,7 +51,8 @@ public class MedicoServiceImpl implements MedicoService {
 		if (medicos.isEmpty()) {
 			response.put("mensaje", "No hay médicos registrados");
 			response.put("httpStatus", HttpStatus.NO_CONTENT.value());
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+			response.put("medicos", medicos);
+			return ResponseEntity.status(HttpStatus.OK).body(response);
 		}
 
 		response.put("mensaje", "Lista de médicos");
@@ -68,7 +69,8 @@ public class MedicoServiceImpl implements MedicoService {
 		if (medicoOpt.isEmpty()) { 
 			response.put("mensaje", "Médico no encontrado");
 			response.put("httpStatus", HttpStatus.NOT_FOUND.value());
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+			response.put("medico", medicoOpt.get());
+			return ResponseEntity.status(HttpStatus.OK).body(response);
 		}
 
 		response.put("mensaje", "Médico encontrado");
@@ -206,7 +208,7 @@ public class MedicoServiceImpl implements MedicoService {
 		if (especialidad == null) {
 			response.put("mensaje", "Especialidad no encontrada para este médico");
 			response.put("httpStatus", HttpStatus.NO_CONTENT.value());
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+			return ResponseEntity.status(HttpStatus.OK).body(response);
 		}
 
 		response.put("mensaje", "Especialidad encontrada");
@@ -223,7 +225,8 @@ public class MedicoServiceImpl implements MedicoService {
 		if (medicos.isEmpty()) {
 			response.put("mensaje", "No hay médicos para esta especialidad");
 			response.put("httpStatus", HttpStatus.NO_CONTENT.value());
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+			response.put("medicos", medicos);
+			return ResponseEntity.status(HttpStatus.OK).body(response);
 		}
 
 		response.put("mensaje", "Lista de médicos por especialidad");
@@ -240,7 +243,8 @@ public class MedicoServiceImpl implements MedicoService {
 		if (dias.isEmpty()) {
 			response.put("mensaje", "No hay días disponibles");
 			response.put("httpStatus", HttpStatus.NO_CONTENT.value());
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+			response.put("diasSemana", dias);
+			return ResponseEntity.status(HttpStatus.OK).body(response);
 		}
 
 		response.put("mensaje", "Días disponibles");
@@ -258,7 +262,8 @@ public class MedicoServiceImpl implements MedicoService {
 		if (horas.isEmpty()) {
 			response.put("mensaje", "No hay horas disponibles para esta fecha");
 			response.put("httpStatus", HttpStatus.NO_CONTENT.value());
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+			response.put("horas", horas);
+			return ResponseEntity.status(HttpStatus.OK).body(response);
 		}
 
 		response.put("mensaje", "Horas disponibles");
@@ -275,7 +280,8 @@ public class MedicoServiceImpl implements MedicoService {
 		if (lista.isEmpty()) {
 			response.put("mensaje", "No cuenta con regitro en el horario");
 			response.put("httpStatus", HttpStatus.NO_CONTENT.value());
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+			response.put("datos", lista);
+			return ResponseEntity.status(HttpStatus.OK).body(response);
 		} else {
 			response.put("mensaje", "Horarios de trabajo encontrados");
 			response.put("httpStatus", HttpStatus.OK.value());
@@ -292,7 +298,8 @@ public class MedicoServiceImpl implements MedicoService {
 		if (url.isEmpty()) {
 			response.put("mensaje", "No se encontró la firma digital");
 			response.put("httpStatus", HttpStatus.NO_CONTENT.value());
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+			response.put("url", url);
+			return ResponseEntity.status(HttpStatus.OK).body(response);
 		}
 
 		response.put("mensaje", "URL obtenida");

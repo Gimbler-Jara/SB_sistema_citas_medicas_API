@@ -29,7 +29,6 @@ public interface CitaMedicaRepository extends JpaRepository<CitaMedica, Integer>
 			@Param("idHora") int idHora, @Param("idEspecialidad") int idEspecialidad);
 	
 
-	// 3. Cambiar estado de disponibilidad
 	@Modifying
 	@Transactional
 	@Query(value = "CALL sp_cambiar_estado_disponibilidad(:idMedico, :idDiaSemana, :idHora, :activo)", nativeQuery = true)

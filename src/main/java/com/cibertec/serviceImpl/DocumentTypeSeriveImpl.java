@@ -28,7 +28,8 @@ public class DocumentTypeSeriveImpl implements DocumentTypeService {
         if (tipos.isEmpty()) {
             response.put("mensaje", "No existen tipos de documento registrados");
             response.put("httpstatus", HttpStatus.NOT_FOUND.value());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            response.put("documentos", tipos);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         } else {
             response.put("mensaje", "Lista de tipos de documento");
             response.put("httpstatus", HttpStatus.OK.value());

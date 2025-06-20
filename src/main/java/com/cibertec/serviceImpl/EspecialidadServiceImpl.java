@@ -27,7 +27,8 @@ public class EspecialidadServiceImpl implements EspecialidadService {
         if (lista.isEmpty()) {
             response.put("mensaje", "No existen especialidades registradas");
             response.put("httpstatus", HttpStatus.NOT_FOUND.value());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            response.put("especialidades", lista);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         } else {
             response.put("mensaje", "Lista de especialidades");
             response.put("httpstatus", HttpStatus.OK.value());

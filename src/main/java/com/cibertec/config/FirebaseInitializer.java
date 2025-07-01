@@ -17,17 +17,20 @@ import java.nio.charset.StandardCharsets;
 @Component
 public class FirebaseInitializer {
 
-	private final String json = "{\r\n" + "  \"type\": \"service_account\",\r\n"
-			+ "  \"project_id\": \"digital-world-8d4cc\",\r\n"
-			+ "  \"private_key_id\": \"8e9b80615c5fb99b7e7fd8b311b7186df81c05e2\",\r\n"
-			+ "  \"private_key\": \"-----BEGIN PRIVATE KEY-----\\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDgHuQRw/L0SiKV\\ntfyVl9ju9wXL3j3mBGrHtYwJCuRnGpzG5a5TR+NX4sDFuVRK+V5K7uAyYA7S45dj\\nYlyDQIT3EY0ld49ojlIRyhkXLbPa7zAAnU2w0+NVKIaGi+LTePbnKl5ITbjEcUV/\\n+VqixvEE75CYpQelXmAEXDWQYNqLKfp/VlhYrRbcH6TsM/yd/5FeSPntaojPVDdb\\nLG2bVl3zbygjsDhG/5rSiagdt5LWnZfH+nqmh7C5KclNgITsDF6gVQKIGN1ZU+f+\\nxx8Jp/g11znpaXNB/XzLFd/zrxgisaKJrR63By7Wh0Yeog6WXn/G4LHovKTYowjQ\\n16QVJ+1fAgMBAAECggEAE3Y7QdutLk99v1hlTaw4909WHoT3BRFfIGaAeYyLlvR1\\npsPtJmg4sroLGWBllHkhGgqyR02WG/QNgmDZPcCNi1Ln2dgPCPpK4CaXlS6vzpQ0\\nq+j9BRzxQcTaIbbmBI0di6dfNpIhOFXJvjouB7KU3WPcP5UdG9wdJGPJdvciIzFh\\nZ6WSeWJDoiRmKPmPeVQEfFZnWuL5RZekyQ99TSRUQAxFWBdDH08rwbFy747te0uG\\nLBs6/ZAGt17fJ63AnGGkzl3hRONy3e+iK4k/8lDBAuGR961rj9xADl3txepXAj3d\\nBpjp8LlYteSFytkL5Uhzj0H8nIEu9Z+Vj26QH7jDCQKBgQDyp54jpFQAdRj/vfp0\\nlRwvqCIvX5T/PFJPazeLKO4re+E0TcQlMXBPaa1olEMaHeFRmaSOFF8BQZgCfFRn\\nwgfVh2vueCzUR+MVN+ORNtF377sjr9lJWIT2B7G3GZKpXn1QcdaIba7WVe6NgJkF\\nFgrouwCCJrULQh5bmCIESa7BHQKBgQDsclQFyfOmPaPNphKlR2SVBYHOaNfTDS+X\\nkMJxJolsEtvBhyySLmwdWlJNE5rXLTJsnQV9ViaDgCKCX2nocAuW6B4hTDZb3XZl\\ngTxf00GXdOlDMnA2/VEf8tlsvSMA7554INZtjERxjBoP9U9nDT5db5RCuAH0xx7q\\niHWWg/R7qwKBgQDS4hFxcFMAwsOjHvwXba89S6XJ/guDdm0iUE/JRR0X9WVXC263\\n1CuDGJh4FsHqZKV5QUndoJ6gfN0a6+p+8gXU8QhAC3kKVB9qRVQk07tfvJyq+xyf\\nvapwF2e/dR4cy92kmAqWLpyP8caMe4KBBRMeB8b9VZ5p1mCDwcduaorRkQKBgGs3\\ntK4jU57wmJSqWA4mf4+rvZ7xn9yOQCSEegeBKBOfwZLSTv3Cmzf8OxHEcBRe5Fyo\\nH1Mke7ZppjxkM8w48qhtfSwwOP4TQJrqrYvuafHaC+RyvLvSxrSsFLfgVD0aa0uh\\n6Foonui2VSMjY+wg70TDUgGnGwv6NyS22Et2bqidAoGACveDCPFlw1h2UhjPmj8n\\nBG+9azVfqii+2+IaybRBbOBlE0fNpOcJjlIvpdBgIXTvg5R5GLzb0mSYoCkgywH5\\nygwiUszaqaKZz00GqVKq2EmMeyAv7nFyl/fWxJk7P0mO/2XCrDRvNx5vVfb15L+u\\nnXG0iI+6QXQXG1A3Jv0QSWU=\\n-----END PRIVATE KEY-----\\n\",\r\n"
-			+ "  \"client_email\": \"firebase-adminsdk-tbqlj@digital-world-8d4cc.iam.gserviceaccount.com\",\r\n"
-			+ "  \"client_id\": \"117588190160810571624\",\r\n"
-			+ "  \"auth_uri\": \"https://accounts.google.com/o/oauth2/auth\",\r\n"
-			+ "  \"token_uri\": \"https://oauth2.googleapis.com/token\",\r\n"
-			+ "  \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\",\r\n"
-			+ "  \"client_x509_cert_url\": \"https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-tbqlj%40digital-world-8d4cc.iam.gserviceaccount.com\",\r\n"
-			+ "  \"universe_domain\": \"googleapis.com\"\r\n" + "}";
+	private final String json = "{\r\n"
+		    + "  \"type\": \"service_account\",\r\n"
+		    + "  \"project_id\": \"digital-world-8d4cc\",\r\n"
+		    + "  \"private_key_id\": \"6dbb2e51c7c19eedf698c23591b02b92fd3f5dba\",\r\n"
+		    + "  \"private_key\": \"-----BEGIN PRIVATE KEY-----\\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDsa1nC7uK6AKOg\\nKudqiG7msRuLlycPD7QV+mxU1US3PWMqgo2+jIV6fo43sg+KQ7Szxcoj0ZqOBN5P\\nmHnml2LCeQW4Hc6SV999f6YJob8Wy5HrWmphl+DWOeMHb4+BwNb+HaOFHPtJyEBZ\\nSq2Aundm991+TjJS2mTUXb8T9+ekAUarMWO8DNwYFtRdcYMzuJrLehWFjeb7ahFe\\nDWtaX9vLpCxEFN7oGLSQcCony+fvNvzQWClbq5CezETOZq1SKavfbAQEVjRT/moz\\nLQ2r9D/uUgAr6T6GEvfvvJgg7tFfstqng9NRLP9v1lYl1nLh15V8+mEDzsg7/spX\\n2RNNc9LJAgMBAAECggEANW0E+dI2FkZys40+goqWVTeMu/zKbNLlpVnUBU+0mZwb\\nvs2F7puexlG3Hcr1TA+E1GNMDNAfFxzuiBoy4fMv9DaZHkROHDATZy7jfKW6oxIZ\\nxY/HHorN2lt2fIWvbmj/rKlR/JDSEJhaQlNn5gE9Xl2BBjvxj1ufEYal2YNaK2tX\\nNACMKR3bwSD24XOYQ8giTHxLMk+HZTnjeya2xB/U94ruBNEKHMQl1h3qdesfHUYJ\\nj1hy/itK7sjU7Ez27u56T+FnU38lE03OTxOVGDTdCiiGuiB6nW4PS6iRPvSZiIl9\\n0/BGQ47FRrP+K3ALBNp+Jr1RtNRLDTvBMOlhHY1uCQKBgQD5Ib1H+O7Q3bAeioRm\\niohOcrDY+4UdDhqUrAcSm5y4UymgJqrw6dbMT9vCQAIqj0cD6E4oRByfSNYwQXp6\\nUduHYJrsVceZcFLlpcYbTVRuhxFGg7FRKUqbqnA0hEO3ppaUrn7trzdrv3YnEG1G\\nekZ5I+6T8q1BBitDx6B5rlhRlwKBgQDy7+R2T19eUgA9roO1i7FION3Yr+CWZx4J\\numM9sisBmgO7ywMiIUYLnTNJCUKeFLmcpX1CSF42eheekufJj4tHD3e9VOfbqwbu\\nSl7RzqLFAljOWp6o+2sb+RsTLEeqR8Sp29+x4eXvsS75VdA48DxBa+WF4dZoLGix\\ndGp8ZIjKnwKBgQCdCg6Fcr4fPM7Kwafp90MqqBMgA5QKF5zbwICI0zx72Dgx8o3o\\nZI54pZIyJST4bO5n4SR7L0wXf9M8AdpRho3qDRQ7C2tRJkOq7M8u4JTrQwq5t0Or\\nlGqqK0qlYAZLmp/qwv/RlZRKwBqbTziCp4sKy4KVEfDyPxBAnnJioWqcqwKBgQDd\\ndaB/1aVrlzcPA6qfceO/oc9ivBnxIbl5Rsc3M9cOk7b5l3yYvVpcNgbNerqW3u/B\\ng/7m0I/J+4zSirrvvIJL2ibemqruTj94NKWxfzxUeeo42tUt2Fvw2So8VS5TZS87\\nZOvL/dEdqxjWRMsXTLCxNsm6PYC14F3j/usf0In+owKBgHXuZTOXl2vJIGaxI2ih\\nukCYx2zDTT3mEwMwfUCf1vTA7RH2vamwdIl4IdhbynMVeYJJqch9PDhuz5jRwEVl\\ngJjUq4aPiggtnqBL2qkoM9sLP5Pf2BkG2AqNGZOJZgLAtv2692FTBnr8yjv8Dgdi\\nJ/Zqo4ykuv2EM9L2c5klpi25\\n-----END PRIVATE KEY-----\\n\",\r\n"
+		    + "  \"client_email\": \"firebase-adminsdk-tbqlj@digital-world-8d4cc.iam.gserviceaccount.com\",\r\n"
+		    + "  \"client_id\": \"117588190160810571624\",\r\n"
+		    + "  \"auth_uri\": \"https://accounts.google.com/o/oauth2/auth\",\r\n"
+		    + "  \"token_uri\": \"https://oauth2.googleapis.com/token\",\r\n"
+		    + "  \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\",\r\n"
+		    + "  \"client_x509_cert_url\": \"https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-tbqlj%40digital-world-8d4cc.iam.gserviceaccount.com\",\r\n"
+		    + "  \"universe_domain\": \"googleapis.com\"\r\n"
+		    + "}";
+
 
 	@PostConstruct
 	public void init() throws IOException {

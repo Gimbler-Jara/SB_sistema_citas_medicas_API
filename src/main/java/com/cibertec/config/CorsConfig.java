@@ -51,6 +51,7 @@ public class CorsConfig {
 				registry.addMapping("/**")
 						.allowedOrigins("http://localhost:4200", 
 								        "https://xzqnmbqb-4200.brs.devtunnels.ms",
+								        "https://ngx4jgnq-4200.brs.devtunnels.ms",
 								        "https://medicoscontigo.netlify.app")
 						.allowedMethods("*").
 						allowedHeaders("*")
